@@ -39,6 +39,8 @@ from src.quantum.lattice import (
 TWO_PI = 2.0 * np.pi
 T_GRAPHENE = 2.7
 D_GRAPHENE = 1.42
+HBAR_SI = 1.054571817e-34
+EV_ANGSTROM_SI = 1.602176634e-19 * 1e-10
 
 
 def _png_dpi(path: Path) -> float:
@@ -322,7 +324,7 @@ def _make_night1_figure(output_path: Path) -> dict:
         0.035,
         0.06,
         "$\\hbar v_F = %.3f$ eV·Å\n$v_F = %.3f\\times10^5$ m/s"
-        % (1.5 * t * d, 1.5 * t * d / 1.054571817),
+        % (1.5 * t * d, 1.5 * t * d * EV_ANGSTROM_SI / HBAR_SI / 1e5),
         transform=ax_bands.transAxes,
         bbox={"boxstyle": "round,pad=0.3", "fc": "white", "ec": "0.7", "alpha": 0.95},
     )
