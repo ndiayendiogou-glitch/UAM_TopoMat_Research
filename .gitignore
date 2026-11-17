@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+.env
+*.log
+paper_latex/*.aux
+paper_latex/*.log
+paper_latex/*.out
+paper_latex/*.toc
+paper_latex/*.synctex.gz
+paper_latex/*.pdf
+.DS_Store
+Thumbs.db
