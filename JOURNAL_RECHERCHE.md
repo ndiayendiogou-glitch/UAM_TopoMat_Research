@@ -258,8 +258,135 @@ La figure est régénérée à chaque exécution de pytest.
 
 ### 6. Prochaines étapes
 
-- Nuit 3 : réponse optique et absorption des pérovskites halogénées.
-- Nuit 4 : thermodynamique, chaleur spécifique et transport.
+- ~~Nuit 3 : états de bord topologiques sur nanorubans.~~ ✓ réalisée
+- ~~Nuit 4 : optique cristalline et rendement photovoltaïque.~~ ✓ réalisée
 - Nuit 5 : intégration, article de synthèse et diffusion UAM/UFR STA.
 
+---
 
+## Nuit 3 — États de bord topologiques sur nanorubans
+
+**Date :** 18 novembre 2026 (Sprint Accéléré Nuit 3 + Nuit 4)  
+**Branche de travail :** `main`  
+**Objectif :** démonstration au Twin Transition Summit du 1er décembre 2026.
+
+### 1. Objectifs
+
+- Construire un solveur de nanoruban 1D en Python pur (numpy uniquement) : périodicité selon $k_x$, largeur finie $N_y$ et conditions aux limites ouvertes selon $y$.
+- Implémenter le ruban de Haldane (transformée de Fourier inverse du modèle de la Nuit 2) et le ruban de Qi–Wu–Zhang (isolant de Chern carré).
+- Détecter automatiquement les états de bord chiraux traversant le gap projeté et vérifier la correspondance volume-bord avec le nombre de Chern $C$.
+
+### 2. Fichier créé
+
+```
+src/topology/edge_states.py   (Nanoribbon, Hopping, solve_ribbon_spectrum,
+                               haldane_ribbon, qwz_ribbon, bulk_chern_fhs)
+```
+
+### 3. Équations implémentées
+
+#### 3.1 Hamiltonien du ruban
+
+Dans la base $|n,\alpha\rangle$ ($n=0,\dots,N_y-1$, $\alpha\in\{A,B\}$), un saut de l'orbitale $i$ de la maille $(0,0)$ vers l'orbitale $j$ de la maille $(\Delta m,\Delta n)$ porte la phase
+
+$$
+t_{ij}(\Delta m,\Delta n;k_x)=t_{ij}\,e^{ik_x R_x},\qquad
+R_x=\Delta m\,a_{1x}+\Delta n\,a_{2x}+\tau_{jx}-\tau_{ix},
+$$
+
+et son conjugué hermitien est ajouté automatiquement. Les données du ruban de Haldane sont $a_1=(\sqrt3 a,0)$, $a_2=(-\sqrt3 a/2,3a/2)$, $\tau_A=(0,0)$, $\tau_B=(0,-a)$, les sauts premiers voisins $-t_1$ vers $-\boldsymbol\delta_j$ et seconds voisins $t_2e^{\pm i\phi}$ vers $+\boldsymbol\nu_j$.
+
+#### 3.2 Limite volumique et gap projeté
+
+À $N_y$ infini, la reconstruction 2D donne $H(k_x,k_y)$ dont les valeurs propres reproduisent `HaldaneModel` à $8.9\times10^{-16}$ près (à jauge de sous-réseau près). À $k_x$ fixé, les bords du continuum volumique sont
+
+$$
+E_v(k_x)=\max_{k_y}E_-(k_x,k_y),\qquad E_c(k_x)=\min_{k_y}E_+(k_x,k_y).
+$$
+
+Un état est déclaré « de bord protégé » s'il est dans la partie centrale (80 %) du gap projeté et si son poids sur les 3 mailles de bord dépasse 0,5. Le comptage des traversées de $E=0$ par les branches de bord donne le nombre de canaux chiraux : $2|C|$ (un par bord).
+
+### 4. Résultats de la validation
+
+| Contrôle | Résultat | Attendu |
+|---|---|---|
+| Limite bulk du ruban vs Haldane Nuit 2 | $8.9\times10^{-16}$ eV | $<10^{-12}$ |
+| Haldane $M=0{,}6$ ($\phi=\pi/2$, $C=+1$) | 2 traversées, 220 états de gap | $2|C|=2$ |
+| Haldane $M=2{,}0$ ($C=0$) | 0 état de gap, 0 traversée | aucun |
+| Haldane $\phi\to-\phi$ ($C=-1$) | chiralité inversée, 2 traversées | $|C|=1$ |
+| QWZ $u=-1$ / $u=+1$ ($C=\mp1$) | FHS $=\mp1$, 2 traversées | $|C|=1$ |
+| QWZ $u=-3$ ($C=0$) | aucun état de bord | aucun |
+| Localisation d'un état de gap | poids $>0{,}99$ sur 5 mailles | décroissance exponentielle |
+
+La figure `results/figures/night3_edge_states_ribbon.png` (300 dpi) montre les spectres $E(k_x)$ topologicalique/trivial de Haldane et le ruban QWZ avec les états de bord en couleur, ainsi que le profil spatial exponentiel d'un état localisé.
+
+---
+
+## Nuit 4 — Optique cristalline et rendement photovoltaïque
+
+**Date :** 18 novembre 2026 (Sprint Accéléré Nuit 3 + Nuit 4)
+
+### 1. Objectifs
+
+- Calculer le spectre d'absorption $\alpha(\lambda)$ à partir de $E_n(\mathbf{k})$ et des éléments de matrice dipolaires déduits de $\partial H/\partial\mathbf{k}$.
+- Implémenter le modèle complet de Shockley–Queisser sous spectre AM1.5G avec dépendance explicite en température (298–330 K).
+- Valider le maximum théorique ($\approx 33{,}7\%$ à $E_g\approx1{,}34$ eV, 25 °C) et la décroissance thermique jusqu'à 45 °C.
+
+### 2. Fichier créé
+
+```
+src/optics/solar_optics.py   (absorption_spectrum, dipole_matrix_element,
+                              am15g_irradiance, photon_flux_above_gap,
+                              radiative_saturation_current, shockley_queisser,
+                              optimize_bandgap, thermal_degradation)
+```
+
+### 3. Équations implémentées
+
+#### 3.1 Absorption interbandes
+
+La vitesse interbande $\mathbf v_{cv}=\hbar^{-1}\langle c|\partial_{\mathbf k}H|v\rangle$ convertit les dérivées eV·Å du solveur Tight-Binding en m/s et donne le dipôle $\mathbf r_{cv}=-i\hbar\mathbf v_{cv}/(E_c-E_v)$. La règle d'or de Fermi avec élargissement lorentzien $\gamma$ fournit
+
+$$
+\alpha(\omega)=\frac{\pi e^2\omega}{\varepsilon_0 c\,n_r V}
+\sum_{v,c,\mathbf k}|\hat{\mathbf e}\!\cdot\!\mathbf r_{cv}|^2(f_v-f_c)\,
+\delta_\gamma(E_c-E_v-\hbar\omega).
+$$
+
+#### 3.2 Spectre solaire et bilan détaillé
+
+Le spectre AM1.5G (table ASTM G173 interpolée, 280–4000 nm) est normalisé à $1000$ W/m². Le flux de photons au-dessus du gap, le courant radiatif de saturation émis dans l'hémisphère avant et la caractéristique $J(V)$ sont
+
+$$
+\Phi_{sun}(E_g)=\int_{\lambda<\lambda_g}\frac{I(\lambda)\lambda}{hc}\,d\lambda,\quad
+J_0=q\frac{2\pi}{h^3c^2}\int_{E_g}^{\infty}\frac{E^2\,dE}{e^{E/k_BT}-1},
+$$
+
+$$
+J(V)=q\Phi_{sun}-J_0\left(e^{qV/k_BT}-1\right),\qquad
+(1+v)e^v=1+\frac{J_{sc}}{J_0},\quad v=\frac{qV_{mp}}{k_BT}.
+$$
+
+Le point de puissance maximale est résolu par itération de Newton (sans SciPy) ; la condition analytique est vérifiée symboliquement avec SymPy.
+
+### 4. Résultats de la validation
+
+| Contrôle | Résultat | Référence |
+|---|---|---|
+| Intégrale AM1.5G | $1000{,}000$ W/m² | $1000$ W/m² |
+| Maximum SQ à 25 °C | $E_g=1{,}339$ eV, $\eta=33{,}94\%$ | $\approx1{,}34$ eV, $\approx33{,}7\%$ |
+| $E_g=1{,}34$ eV, 25 °C | $J_{sc}=35{,}2$ mA/cm², $V_{oc}=1{,}084$ V, $FF=0{,}890$ | valeurs SQ standards |
+| $\eta$ à 45 °C | $33{,}06\%$ (chute de $0{,}87$ pt) | décroissance réaliste |
+| Pente thermique 25–57 °C | $-0{,}043$ pt/K | typique $-0{,}04$/$-0{,}05$ pt/K |
+| Absorption hors gap / au-dessus du seuil | rapport $<0{,}1$ | seuil optique |
+
+La figure `results/figures/night4_solar_efficiency_vs_temp.png` (300 dpi) présente $\eta(E_g,T)$, la dégradation thermique à $E_g=1{,}34$ eV, le spectre AM1.5G avec la longueur d'onde de coupure et le spectre $\alpha(\lambda)$ calculé depuis le modèle de pérovskite de la Nuit 1.
+
+### 5. Bilan du sprint et prochaines étapes
+
+Sprint validé : `python -m pytest -q` → **79 tests passés** (19 Nuit 1 + 25 Nuit 2 + 35 Nuit 3/4), figures de publication régénérées à chaque exécution. Aucune dépendance SciPy n'a été introduite.
+
+- Nuit 5 : intégration des modules, article de synthèse et diffusion UAM/UFR STA.
+- Diffusion prévue : Twin Transition Summit, 1er décembre 2026.
+
+---
