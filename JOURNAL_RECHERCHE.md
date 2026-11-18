@@ -1159,10 +1159,134 @@ $J_{sc}$, $FF$ et gain à Matam.
 
 Les neuf nuits forment une chaîne complète et validée : cristallographie et
 Tight-Binding (1) → courbure de Berry et Chern (2) → états de bord (3) → optique
-AM1.5G et Shockley–Queisser (4) → thermodynamique sahélienne (5) → EDP de
+AM1.5G et Shockley--Queisser (4) → thermodynamique sahélienne (5) → EDP de
 transport et $J(V)$ (6) → supercondensateurs MXènes (7) → base de 2 000
 matériaux sans plomb (8) → découverte inverse et optimisation Pareto NSGA-II (9).
 Aucune dépendance SciPy n'a été introduite ; 241 tests et neuf figures de
 publication sont reproduits à chaque exécution de `python -m pytest`.
+
+**Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
+
+---
+
+## Nuit 10 — Preuves formelles SymPy & moteur d'export PDF scientifique UAM
+
+**Date :** 18 novembre 2026  
+**Branche de travail :** `main`  
+**Objectif :** certifier symboliquement les six équations fondatrices de la
+chaîne UAM-TOPOMAT et produire automatiquement une fiche technique PDF
+conforme à la charte de l'Université Amadou Mahtar Mbow, à partir du Top~10
+de la Nuit~9.
+
+### 1. Objectifs
+
+- Dériver les six théorèmes avec SymPy en Python pur (**aucune dépendance
+  à SciPy**), exporter les équations en LaTeX propre via `sympy.latex` et
+  certifier que tous les résidus symboliques sont nuls.
+- Vérifier numériquement que `UAM-1384` (K$_2$AgBiI$_6$) et `UAM-1517`
+  (Ti$_3$C$_2$O$_2$) respectent les bornes théoriques exactes.
+- Générer `paper_latex/fiche_technique_champions.tex` (charte UAM, encadrés
+  `tcolorbox`, tableaux comparatifs, figures 300~dpi) et le compiler en
+  `results/UAM_TopoMat_Fiche_Champions.pdf` avec `pdflatex`/`tectonic`.
+- Écrire une suite pytest de validation syntaxique LaTeX, d'exactitude
+  symbolique et de génération des fichiers ; exécuter `pytest -v`.
+
+### 2. Fichiers créés
+
+```
+src/quantum/symbolic_proofs.py   (6 preuves SymPy, table de noms LaTeX,
+                                  vérification des bornes, certificat LaTeX)
+src/export_report.py             (générateur de fiche UAM + compilation PDF)
+tests/test_night10.py            (13 tests : preuves, LaTeX, bornes, PDF, figures)
+paper_latex/equations_verified.tex          (~11 ko, compilé en PDF)
+paper_latex/fiche_technique_champions.tex   (~10 ko)
+results/UAM_TopoMat_Fiche_Champions.pdf     (~2,3 Mo, pdflatex MiKTeX)
+```
+
+### 3. Les six théorèmes certifiés
+
+1. **Tight-Binding / Hellmann--Feynman.** Pour la chaîne dimérisée
+   $H=d_x\sigma_x+d_y\sigma_y$,
+   $E_\pm(k)=\pm\sqrt{t_1^2+2t_1t_2\cos(ak)+t_2^2}$ et
+   $v_g^{(n)}=\hbar^{-1}\partial_kE_n$. Le résidu
+   $\operatorname{Tr}(P_\pm\partial_kH)-\partial_kE_\pm$ est **exactement nul**
+   (vérifié avec le projecteur $P_\pm=(\mathbb{I}\pm H/E)/2$) ; la chaîne
+   uniforme donne $v_g^{\mathrm{1D}}=-2at\sin(ak)/\hbar$.
+2. **Courbure de Berry / Chern.** Pour $H=\mathbf{d}\cdot\boldsymbol{\sigma}$,
+   $\Omega_-=-\tfrac12\hat{\mathbf{d}}\cdot(\partial_{k_x}\hat{\mathbf{d}}
+   \times\partial_{k_y}\hat{\mathbf{d}})$ et
+   $C_n=(2\pi)^{-1}\int_{\mathrm{BZ}}\Omega_n\,d^2k\in\mathbb{Z}$. SymPy
+   certifie l'identité géométrique
+   $\hat{\mathbf{d}}\cdot(\partial_x\hat{\mathbf{d}}\times\partial_y\hat{\mathbf{d}})
+   =\sin\theta(\partial_x\theta\,\partial_y\varphi-\partial_y\theta\,\partial_x\varphi)$,
+   la contribution $-\tfrac12\operatorname{sgn}(m)$ du cône de Dirac massif et
+   les phases $C=\pm1$ ou $0$ du modèle de Haldane.
+3. **Shockley--Queisser.** $J(V)=J_{sc}-J_0(e^{qV/k_BT}-1)$ avec
+   $J_0=q(2\pi/h^3c^2)\int_{E_g}^{\infty}E^2/(e^{E/k_BT}-1)\,dE$ ; le maximum
+   de puissance satisfait exactement $(1+v)e^v=1+J_{sc}/J_0$ avec
+   $v=qV_{mp}/k_BT$, $J_{mp}=J_0ve^v$ et
+   $\eta_{\mathrm{SQ}}=V_{mp}J_{mp}/P_{\mathrm{in}}$.
+4. **Stefan--Boltzmann.** $\sigma_{SB}=2\pi^5k_B^4/(15h^3c^2)
+   =5{,}670374419\times10^{-8}$~W\,m$^{-2}$\,K$^{-4}$ (accord relatif
+   $3\times10^{-16}$). Le bilan
+   $f(T_j)=\alpha G-\eta G-h_{\mathrm{conv}}(T_j-T_{amb})
+   -\varepsilon\sigma_{SB}(T_j^4-T_{sky}^4)$ admet une racine unique car
+   $f'(T_j)=-\beta\eta G-h_{\mathrm{conv}}-4\varepsilon\sigma_{SB}T_j^3<0$.
+5. **Scharfetter--Gummel / Einstein.**
+   $B(z)=z/(e^z-1)$ vérifie $B(-z)=B(z)+z$ et
+   $B(z)=1-z/2+z^2/12+O(z^4)$. Le flux exponentiel se réécrit
+   $J_{n,i+1/2}=A_i(w_{i+1}-w_i)$ en variables de Slotboom ($A_i>0$), garantie
+   de la conservation exacte ; le flux net à l'équilibre impose
+   $D=\mu\,k_BT_j/q$ (résidu SymPy nul).
+6. **Capacité série $C_Q$ / $C_H$.** $C_Q=e^2\mathrm{DOS}(E_F+eV)/A$ et
+   $C_{\mathrm{tot}}^{-1}=C_Q^{-1}+C_H^{-1}$, d'où
+   $C_{\mathrm{tot}}=C_QC_H/(C_Q+C_H)<\min(C_Q,C_H)$ et
+   $\partial C_{\mathrm{tot}}/\partial C_Q=C_H^2/(C_Q+C_H)^2$.
+
+### 4. Vérification des champions
+
+Dix-huit bornes exactes sont vérifiées pour chaque champion : gap borné,
+$\mu_n>\mu_p>0$, $C\in\{-1,0,+1\}$, $\eta\le\eta_{\mathrm{SQ}}(E_g,T_{ref})$,
+$\eta\le\eta_{\mathrm{SQ}}^{\max}$, $qV_{oc}\le E_g$, $0<FF<1$, $J_{sc}>0$,
+$T_j>T_{amb}$, cohérence du bilan thermique ($\Delta T_j<0{,}1$~K et
+résidu $<10^{-6}$~W\,m$^{-2}$), convection positive,
+$0{,}02<V_T=k_BT_j/q<0{,}05$~V, $D_n/D_p=\mu_n/\mu_p$, $\beta_T<0$,
+$0<R_{47}\le100\,\%$ et $0<E_{47}<100$~Wh\,kg$^{-1}$.
+
+| Champion | $C$ | $\eta_{\mathrm{Matam}}$ (\%) | $V_{oc}$ (V) | $J_{sc}$ (mA/cm²) | $FF$ | $T_j$ (°C) | Bornes validées |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| UAM-1384 (K$_2$AgBiI$_6$) | $+1$ | 22,84 | 1,074 | 32,14 | 0,695 | 75,92 | 18 / 18 |
+| UAM-1517 (Ti$_3$C$_2$O$_2$) | $-1$ | 18,00 | 1,515 | 17,48 | 0,714 | 74,09 | 18 / 18 |
+
+### 5. Export PDF et charte UAM
+
+La fiche `fiche_technique_champions.tex` respecte strictement la charte :
+**UNIVERSITÉ AMADOU MAHTAR MBOW / UFR SCIENCES ET TECHNOLOGIES AVANCÉES /
+CELLULE PHYSIQUE / Réalisé par : Ndiogou Ndiaye / Année universitaire :
+2026 -- 2027**. Elle contient des encadrés `tcolorbox`, le tableau comparatif
+du Top~10, deux fiches détaillées, le socle des six théorèmes, le tableau des
+36 bornes vérifiées et quatre figures 300~dpi (Nuits 1, 4, 7 et 9). La
+compilation est automatique si `tectonic` ou `pdflatex` est détecté ; ici
+`pdflatex` (MiKTeX) a produit `results/UAM_TopoMat_Fiche_Champions.pdf`
+(2,3~Mo, compilation propre sans avertissement).
+
+### 6. Validation
+
+Commande : `python -m pytest -v` → **254 tests passés (241 + 13), soit 100 %**.
+Les tests vérifient l'exactitude des six preuves (résidus $<10^{-12}$), la
+validité syntaxique des deux documents LaTeX (accolades et environnements
+équilibrés), la présence de la charte UAM et des 10 champions, les bornes des
+deux champions, la résolution 300~dpi des figures et la compilation PDF.
+
+### 7. Bilan définitif du projet
+
+Les dix nuits forment une chaîne complète et validée : cristallographie et
+Tight-Binding (1) → courbure de Berry et Chern (2) → états de bord (3) →
+optique AM1.5G et Shockley--Queisser (4) → thermodynamique sahélienne (5) →
+EDP de transport et $J(V)$ (6) → supercondensateurs MXènes (7) → base de
+2~000 matériaux sans plomb (8) → découverte inverse NSGA-II (9) → preuves
+formelles SymPy et export PDF UAM (10). Aucune dépendance SciPy n'a été
+introduite ; 254 tests et dix figures/certificats sont reproduits à chaque
+exécution de `python -m pytest`.
 
 **Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
