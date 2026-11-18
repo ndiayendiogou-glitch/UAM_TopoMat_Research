@@ -1,6 +1,24 @@
 """Moteur quantique : cristallographie, zones de Brillouin et structures de bandes."""
 
 from .band_structure import HBAR, TightBindingModel, uniform_k_grid
+from .materials_generator import (
+    DB_PATH,
+    EG_MAX,
+    EG_MIN,
+    FAMILY_ABX3,
+    FAMILY_DOUBLE,
+    FAMILY_MXENE,
+    FAMILY_TARGETS,
+    N_MATERIALS,
+    SEED,
+    SUMMARY_PATH,
+    build_tight_binding_model,
+    generate_candidates,
+    load_database,
+    material_summary,
+    representative_sample,
+    save_database,
+)
 from .lattice import (
     LATTICE_FACTORIES,
     CrystalLattice,
@@ -26,4 +44,20 @@ __all__ = [
     "mxene_lattice",
     "build_lattice",
     "LATTICE_FACTORIES",
+    "SEED",
+    "N_MATERIALS",
+    "FAMILY_ABX3",
+    "FAMILY_DOUBLE",
+    "FAMILY_MXENE",
+    "FAMILY_TARGETS",
+    "EG_MIN",
+    "EG_MAX",
+    "DB_PATH",
+    "SUMMARY_PATH",
+    "generate_candidates",
+    "material_summary",
+    "save_database",
+    "load_database",
+    "build_tight_binding_model",
+    "representative_sample",
 ]

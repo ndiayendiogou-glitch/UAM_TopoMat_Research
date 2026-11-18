@@ -922,3 +922,122 @@ introduite ; 187 tests et sept figures de publication sont reproduits à chaque
 exécution de `python -m pytest`.
 
 **Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
+
+---
+
+## Nuit 8 — Base déterministe de 2 000 matériaux cristallins sans plomb
+
+**Date :** 18 novembre 2026  
+**Branche de travail :** `main`  
+**Objectif :** fournir à la chaîne UAM-TOPOMAT une base de données cristallochimique
+reproductible de 2 000 candidats sans plomb ni cobalt, ancrée dans les ressources
+minérales de l'Afrique de l'Ouest, et vérifier que chaque famille reste compatible
+avec les solveurs des Nuits 1 à 7.
+
+### 1. Objectifs
+
+- Implémenter un générateur déterministe (graine `SEED = 2026`) en Python pur
+  (numpy, sympy, matplotlib, **aucune dépendance SciPy**).
+- Produire exactement 2 000 candidats uniques répartis en trois familles :
+  pérovskites $ABX_3$ (Sn, Bi, Ti, Ge), pérovskites doubles $A_2B'B''X_6$
+  (Bi–Ag, Sn–Ti, Sb–In) et MXènes 2D $M_2X$ / $M_3X_2$ (Ti, V, Mn, Fe ;
+  carbures et nitrures).
+- Corréler tous les paramètres physiques à la chimie des éléments et garantir
+  la neutralité de charge exacte de chaque composition.
+- Sauvegarder `data/african_materials_db.json` et `data/db_summary.json`,
+  valider 100 % des tests (Nuits 1 à 8) et produire la figure 300 dpi
+  `results/figures/night8_materials_landscape.png`.
+
+### 2. Fichiers créés
+
+```
+src/quantum/materials_generator.py   (Element, generate_candidates,
+                                      material_summary, save_database,
+                                      load_database, build_tight_binding_model,
+                                      representative_sample)
+data/african_materials_db.json       (2 000 candidats, 1,36 Mo)
+data/db_summary.json                 (résumé statistique déterministe)
+tests/test_night8.py                 (42 tests : structure, physique,
+                                      déterminisme, solveurs Nuits 1–7, figure)
+results/figures/night8_materials_landscape.png
+```
+
+### 3. Génération cristallochimique
+
+#### 3.1 Occupation des sites et neutralité
+
+Les sites sont occupés par une ou deux espèces avec des fractions discrètes
+($0{,}25$ ; $0{,}5$ ; $0{,}75$ ; $1/3$ ; $2/3$), ce qui engendre 2 000 formules
+distinctes (solutions solides ordonnées) à partir d'une table de 30 éléments.
+Les états d'oxydation sont affectés par site et non par élément : Sn et Ge sont
+$+2$ dans les halogénures et $+4$ dans les oxydes ; Bi–Ag donne
+$A_2\mathrm{Ag}^{1+}\mathrm{Bi}^{3+}X_6$, Sb–In donne
+$A_2\mathrm{In}^{1+}\mathrm{Sb}^{3+}X_6$ et Sn–Ti donne
+$A_2^{2+}\mathrm{Sn}^{4+}\mathrm{Ti}^{4+}O_6$. Pour les MXènes, l'état moyen
+$M$ est déduit de la charge anionique totale, terminaisons $O_2$, $F_2$ et
+$(OH)_2$ comprises. La charge nette stockée est **exactement nulle** pour les
+2 000 candidats.
+
+#### 3.2 Paramètres corrélés à la chimie
+
+| Paramètre | Corrélation physique |
+|---|---|
+| $a$, $c$ | Rayons ioniques de Shannon ; $t=(r_A+r_X)/[\sqrt2(r_B+r_X)]$ et $a\simeq2(r_B+r_X)(0{,}98+0{,}04t)$ ; $c=a$ (pérovskites), $c=4{,}6$ ($M_2X$) ou $18{,}6$ Å ($M_3X_2$) |
+| $t_1$, $t_2$ | Recouvrement orbitalaire : $t_1\propto e^{-(a-3{,}9)/1{,}2}$, $t_2=t_1(0{,}22+0{,}10\lambda/(\lambda+0{,}1))$ |
+| $\lambda_{\mathrm{SOC}}$ | $\lambda=0{,}45\,(Z_{\max}/83)^4$ : 0,45 eV pour Bi/I, $\approx0{,}002$ eV pour les carbures de Ti |
+| $E_g$ | $0{,}85+0{,}70\Delta\chi-0{,}35\lambda-0{,}10(a-4)+\Delta_{\text{famille}}$, borné à $[0{,}5\,;\,2{,}8]$ eV |
+| $\mu_n$, $\mu_p$ | $\mu\propto t_1a^2/(1+8\lambda)$, $\mu_p\approx0{,}45\mu_n$ |
+| $\beta_T$ | $-(0{,}0010+0{,}0028(1-E_g/2{,}8))(1+0{,}5\lambda)$ ; facteur 0,65 pour les doubles pérovskites (stabilité thermique supérieure) |
+| Abondance | Moyenne pondérée des indices de ressources ouest-africaines (Fe, Ti, Mn $\approx1$ ; Ag, In, Cs $<0{,}3$) |
+| Coût | Moyenne massique des coûts élémentaires (USD/kg) |
+
+### 4. Résultats de la validation
+
+Commande : `python -m pytest -v` → **229 tests passés** (187 + 42), soit 100 %.
+
+| Contrôle | Résultat | Exigence |
+|---|---|---|
+| Candidats uniques | 2 000 identifiants et 2 000 formules | exactement 2 000 |
+| Plomb / cobalt | 0 % | 0 % |
+| Neutralité de charge | $|Q_{\text{net}}|=0$ sur 2 000 candidats | $<10^{-9}$ |
+| Gaps optiques | $[1{,}366\,;\,2{,}689]$ eV | $[0{,}5\,;\,2{,}8]$ eV |
+| Mobilités | $\mu_n\in[101\,;\,1281]$, $\mu_p\in[42\,;\,612]$ cm²/V/s | réaliste, $\mu_p<\mu_n$ |
+| Déterminisme | empreinte JSON identique à graine 2026 | bit-à-bit |
+| Figure 300 dpi | 792 797 octets, pHYs $\approx300$ dpi | ±1 dpi |
+
+Répartition : 900 $ABX_3$, 550 $A_2B'B''X_6$, 550 MXènes. Les MXènes présentent
+l'indice de ressource moyen le plus élevé (0,896) et le coût moyen le plus faible
+(4,49 USD/kg), les pérovskites doubles la dérive thermique la plus faible
+($\langle\beta_T\rangle=-1{,}42\times10^{-3}$ K$^{-1}$). Les valeurs moyennes
+globales sont $\langle E_g\rangle=1{,}960$ eV, $\langle t_1\rangle=0{,}898$ eV,
+$\langle\mu_n\rangle=554$ cm²/V/s et $\langle\text{coût}\rangle=100{,}6$ USD/kg.
+
+### 5. Intégration des Nuits 1 à 7
+
+Un échantillon représentatif (une formule par sous-famille) est injecté dans les
+solveurs existants : Tight-Binding et DOS (Nuit 1), nombre de Chern FHS avec les
+sauts du candidat (Nuit 2, $C=+1$), états de bord d'un ruban de Haldane alimenté
+par $t_1$ et $t_2$ (Nuit 3), Shockley–Queisser sur $E_g$ (Nuit 4), bilan
+thermodynamique sahélien avec $\beta_T$ du candidat (Nuit 5), transport
+Poisson–dérive–diffusion couplé à $T_j$ (Nuit 6) et capacité quantique d'une
+électrode MXène reconstruite depuis $a$, $c$ et $t_1$ (Nuit 7). Tous les solveurs
+convergent avec des valeurs finies et physiquement bornées.
+
+### 6. Figure de publication
+
+`results/figures/night8_materials_landscape.png` — 300 dpi — quatre panneaux :
+(a) histogrammes des gaps $E_g$ par famille, (b) corrélation $E_g$ – $\beta_T$,
+(c) abondance ouest-africaine vs. coût colorée par $E_g$ (échelle log), et
+(d) répartition des 2 000 candidats avec l'indice de ressource moyen par famille.
+
+### 7. Bilan définitif du projet
+
+Les huit nuits forment une chaîne complète et validée : cristallographie et
+Tight-Binding (1) → courbure de Berry et Chern (2) → états de bord (3) → optique
+AM1.5G et Shockley–Queisser (4) → thermodynamique sahélienne (5) → EDP de
+transport et $J(V)$ (6) → supercondensateurs MXènes (7) → base de 2 000
+matériaux sans plomb et validation croisée (8). Aucune dépendance SciPy n'a été
+introduite ; 229 tests et huit figures de publication sont reproduits à chaque
+exécution de `python -m pytest`.
+
+**Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
