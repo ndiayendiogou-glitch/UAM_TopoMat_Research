@@ -115,7 +115,149 @@ Point technique corrigé durant la nuit : les coordonnées fractionnaires de K d
 
 ### 6. Prochaines étapes
 
-- Nuit 2 : courbure de Berry, invariant de Chern, phases de Zak.
+- ~~Nuit 2 : courbure de Berry, invariant de Chern, phases de Zak.~~ ✓ réalisée
+- Nuit 3 : réponse optique et absorption des pérovskites halogénées.
+- Nuit 4 : thermodynamique, chaleur spécifique et transport.
+- Nuit 5 : intégration, article de synthèse et diffusion UAM/UFR STA.
+
+---
+
+## Nuit 2 — Théorie de jauge sur réseau, courbure de Berry et phase de Haldane
+
+**Date :** 18 novembre 2026  
+**Sauvegarde :** branche `backup/nuit2-pre-travail` créée avant toute modification  
+**Branche de travail :** `main`
+
+### 1. Objectifs
+
+- Implémenter le moteur de théorie de jauge sur réseau de Fukui–Hatsugai–Suzuki (FHS) en Python pur (numpy uniquement).
+- Ajouter le modèle de Haldane sur réseau hexagonal (sauts premiers voisins, sauts seconds complexes brisant $T$, masse alternée).
+- Valider l'invariance de jauge exacte, la quantification entière du nombre de Chern et la fermeture du gap aux points de Dirac (numériquement et symboliquement).
+- Produire la figure 300 dpi `results/figures/night2_haldane_chern_phase.png`.
+
+### 2. Fichiers créés
+
+```
+src/topology/berry_chern.py    (moteur FHS : liens, plaquettes, courbure, Chern)
+src/topology/models_topo.py    (modèle de Haldane + masses de Dirac + Chern analytique)
+tests/test_night2.py           (25 tests numériques et symboliques)
+results/figures/night2_haldane_chern_phase.png
+```
+
+Aucune dépendance à SciPy n'a été introduite (`numpy`, `sympy`, `matplotlib`).
+
+### 3. Équations implémentées
+
+#### 3.1 Liens de jauge et plaquettes (méthode FHS)
+
+Sur une grille périodique $\mathbf{k}_{ij} = \frac{i+\frac12}{N_1}\mathbf{b}_1 + \frac{j+\frac12}{N_2}\mathbf{b}_2$ couvrant la ZB, les liens de jauge entre états propres voisins sont
+
+$$
+U_\mu(\mathbf{k}) = \frac{\langle\psi_n(\mathbf{k})|\psi_n(\mathbf{k}+\delta\mathbf{k}_\mu)\rangle}
+{\left|\langle\psi_n(\mathbf{k})|\psi_n(\mathbf{k}+\delta\mathbf{k}_\mu)\rangle\right|},
+\qquad |U_\mu(\mathbf{k})| = 1.
+$$
+
+Le champ de Berry sur la plaquette élémentaire est le produit fermé (branche principale $\mathrm{Arg}\in(-\pi,\pi]$) :
+
+$$
+F_{12}(\mathbf{k}) = \mathrm{Arg}\!\left[U_1(\mathbf{k})\,U_2(\mathbf{k}+\hat 1)\,
+U_1(\mathbf{k}+\hat 2)^{-1}\,U_2(\mathbf{k})^{-1}\right].
+$$
+
+Sous une transformation de jauge locale $\psi_n(\mathbf{k})\to e^{i\theta(\mathbf{k})}\psi_n(\mathbf{k})$, chaque lien devient $U_\mu\to e^{i\theta(\mathbf{k})}U_\mu e^{-i\theta(\mathbf{k}+\hat\mu)}$ ; le produit de plaquette est donc **strictement invariant** (pas seulement à $O(\delta k)^2$ comme pour les dérivées finies).
+
+#### 3.2 Courbure et nombre de Chern
+
+Avec $dA = |\mathbf{b}_1\times\mathbf{b}_2|/(N_1N_2)$ l'aire d'une maille,
+
+$$
+\Omega_n(\mathbf{k}) = \frac{F_{12}(\mathbf{k})}{dA},\qquad
+C_n = \frac{1}{2\pi}\sum_{\mathbf{k}\in\mathrm{ZB}}F_{12}(\mathbf{k})
+= \frac{1}{2\pi}\int_{\mathrm{ZB}}\Omega_n(\mathbf{k})\,d^2k \in \mathbb{Z}.
+$$
+
+La somme des $C_n$ sur toutes les bandes est nulle (tests vérifiés pour les deux bandes de Haldane).
+
+#### 3.3 Modèle de Haldane
+
+Réseau nid-d'abeille ($a$ = distance premier voisin), vecteurs $\boldsymbol{\delta}_j$ (1er voisins) et $\boldsymbol{\nu}_j$ (2e voisins) :
+
+$$
+H(\mathbf{k}) = \big[M - 2t_2\sin\phi\sum_j\sin(\mathbf{k}\cdot\boldsymbol{\nu}_j)\big]\sigma_z
++ 2t_2\cos\phi\sum_j\cos(\mathbf{k}\cdot\boldsymbol{\nu}_j)\,\mathbb{I}
++ d_x(\mathbf{k})\sigma_x + d_y(\mathbf{k})\sigma_y,
+$$
+
+$$
+d_x - i d_y = -t_1\sum_j e^{-i\mathbf{k}\cdot\boldsymbol{\delta}_j},
+\qquad E_\pm(\mathbf{k}) = d_0(\mathbf{k}) \pm |\mathbf{d}(\mathbf{k})|.
+$$
+
+Le terme $t_2 e^{\pm i\phi}$ brise la symétrie par renversement du temps et ouvre un gap topologique ; $M$ est la masse alternée de Stoner–Wannier.
+
+#### 3.4 Fermeture du gap et diagramme de phase
+
+Aux points de Dirac $K=(4\pi/3\sqrt3 a,0)$ et $K'=-K$, $f(K)=f(K')=0$, si bien que $d_x=d_y=0$ et l'écart vaut $2|d_z|$. SymPy donne exactement
+
+$$
+\sum_j\sin(K\cdot\boldsymbol{\nu}_j)=-\frac{3\sqrt3}{2},\qquad
+\sum_j\sin(K'\cdot\boldsymbol{\nu}_j)=+\frac{3\sqrt3}{2},
+$$
+
+$$
+d_z(K) = M + 3\sqrt3\,t_2\sin\phi,\qquad
+d_z(K') = M - 3\sqrt3\,t_2\sin\phi.
+$$
+
+La gap se ferme donc **exactement** sur
+
+$$
+|M| = 3\sqrt3\,|t_2\sin\phi| \quad\Longleftrightarrow\quad
+\left|\frac{M}{3\sqrt3\,t_2\sin\phi}\right| = 1.
+$$
+
+Avec les chiralités $\chi_K=-1$, $\chi_{K'}=+1$, la contribution de chaque cône massif donne
+
+$$
+C_{\text{inf}} = -\tfrac12\big[-\mathrm{sgn}(M+M_c)+\mathrm{sgn}(M-M_c)\big],
+\qquad M_c = 3\sqrt3\,t_2\sin\phi,
+$$
+
+d'où les trois phases : $C=+1$ si $\sin\phi>0$ et $|M|<|M_c|$ ; $C=-1$ si $\sin\phi<0$ et $|M|<|M_c|$ ; $C=0$ si $|M|>|M_c|$.
+
+### 4. Résultats numériques
+
+Commande : `python -m pytest -v` → **44 tests passés** (19 Nuit 1 + 25 Nuit 2).
+
+| Contrôle | Résultat | Tolérance |
+|---|---|---|
+| Invariance de jauge (grille 28×28, 2 bandes, phase aléatoire) | erreur max $5.90\times10^{-16}$ | $<10^{-12}$ |
+| Invariance de jauge (10 transformations successives) | erreur max $<10^{-12}$ | $<10^{-12}$ |
+| $|U_\mu(\mathbf{k})|=1$ | précision machine $10^{-14}$ | $10^{-14}$ |
+| Chern Haldane $\phi=\pi/2,\ M/t_2=0$ | $C=+1.0000000000$ | $\pm10^{-9}$ |
+| Chern Haldane $\phi=-\pi/2,\ M/t_2=0$ | $C=-1.0000000000$ | $\pm10^{-9}$ |
+| Chern Haldane $\phi=\pi/2,\ M/t_2=7$ | $C=0.0000000000$ | $\pm10^{-9}$ |
+| Stabilité sous raffinement (24, 40, 64) | $[+1,+1,+1]$ | identique |
+| Gap à $M=M_c$ (point $K'$) | $<10^{-12}$ | gap nul |
+| Gap à $M=-M_c$ (point $K$) | $<10^{-12}$ | gap nul |
+| Loi locale du gap $|M-M_c|=0.01$ | $2\,\Delta M = 0.02$ | $10^{-10}$ |
+| Frontière symbolique SymPy | $M=\pm3\sqrt3\,t_2\sin\phi$ | exact |
+| Figure 300 dpi | 367 696 octets, pHYs $\approx300$ dpi | $\pm1$ dpi |
+
+Paramètres de la figure : $t_1=1$, $t_2=0.3$, $\phi=\pi/2$, $M=0.6$ ($M_c=3\sqrt3\,t_2\simeq1.559$, donc $C=+1$), grille FHS $130\times130$. Courbure $\Omega\in[-12.01,\,12.51]$ Å², champ de plaquette $F_{12}\in[-0.0108,\,0.0113]$ rad, aire de maille $dA=8.9913\times10^{-4}$ Å².
+
+### 5. Figure de publication
+
+`results/figures/night2_haldane_chern_phase.png` — 300 dpi — deux panneaux :
+
+1. **(a)** Distribution $2$D de $\Omega(\mathbf{k})$ dans la première ZB (parallélogramme centré sur $\Gamma$) pour la phase $C=+1$, avec points de Dirac $K,K'$ repliés dans la zone et échelle symlog révélant les pics de courbure.
+2. **(b)** Diagramme de phase complet $(\phi,\,M/t_2)$ : régions $C=+1$ (rouge), $C=-1$ (blanc), $C=0$ (bleu), avec les frontières $|M/t_2|=3\sqrt3|\sin\phi|$ en pointillés et les points testés par la méthode FHS (étoiles).
+
+La figure est régénérée à chaque exécution de pytest.
+
+### 6. Prochaines étapes
+
 - Nuit 3 : réponse optique et absorption des pérovskites halogénées.
 - Nuit 4 : thermodynamique, chaleur spécifique et transport.
 - Nuit 5 : intégration, article de synthèse et diffusion UAM/UFR STA.
