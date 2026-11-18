@@ -767,3 +767,158 @@ Aucune dépendance SciPy n'a été introduite ; 164 tests et six figures de
 publication sont reproduits à chaque exécution de `python -m pytest`.
 
 **Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
+
+---
+
+## Nuit 7 — Modélisation des supercondensateurs topologiques MXènes sans plomb
+
+**Date :** 18 novembre 2026  
+**Branche de travail :** `main`  
+**Objectif :** prolonger la chaîne UAM-TOPOMAT du matériau quantique au dispositif de
+stockage : convertir la DOS topologique des MXènes $M_2X$ en capacité quantique,
+l'associer à la double couche de Helmholtz, puis simuler le stockage d'énergie
+sous le climat réel du Sénégal (25–50 °C, Matam 47 °C).
+
+### 1. Objectifs
+
+- Implémenter en Python pur (numpy, sympy, matplotlib, **aucune dépendance SciPy**)
+  le modèle complet d'un supercondensateur asymétrique à électrodes MXènes sans
+  plomb (Ti₂CTₓ / Nb₂CTₓ).
+- Coupler $C_Q(V)=e^2\,\mathrm{DOS}(E_F+eV)$, issue du solveur Tight-Binding de la
+  Nuit 1, à la capacité de double couche $C_H$ en série.
+- Simuler les cycles galvanostatiques, l'ESR sahelien, les densités d'énergie
+  (Wh/kg) et de puissance (W/kg), et dresser le diagramme de Ragone.
+- Valider la conservation de la charge, l'association en série (SymPy), le
+  maintien de > 94 % de capacité à 47 °C et produire la figure 300 dpi
+  `results/figures/night7_ragone_mxene_sahel.png`.
+
+### 2. Fichiers créés
+
+```
+src/thermo/supercapacitor_mxene.py   (MXeneElectrode, AsymmetricSupercapacitor,
+                                     GalvanostaticCycle, RagonePoint, esr,
+                                     pore_accessibility, site_ragone_point,
+                                     verifications symboliques SymPy)
+tests/test_night7.py                 (23 tests numériques, symboliques et de figure)
+results/figures/night7_ragone_mxene_sahel.png
+```
+
+Aucune dépendance à SciPy n'a été introduite (numpy, sympy, matplotlib, pytest).
+
+### 3. Équations implémentées
+
+#### 3.1 Capacité quantique depuis la DOS Tight-Binding
+
+Le modèle $M_2X$ à 3 orbitales de la Nuit 1 est réutilisé directement
+(`TightBindingModel.mxene`, grille $32\times32$, élargissement
+$\sigma=\sigma_0+k_BT/e$ avec $\sigma_0=0{,}35$ eV). La DOS (états/eV/cellule)
+donne, avec $A_{\text{cell}}=\sqrt3\,a^2/2=7{,}7942\times10^{-20}$ m² pour $a=3$ Å :
+
+$$
+C_Q(V)=\frac{e^2\,\mathrm{DOS}(E_F+eV)}{A_{\text{cell}}},\qquad
+C_Q\in[0{,}23\,;\,2{,}35]\ \text{F m}^{-2}.
+$$
+
+#### 3.2 Association série et équilibre de charge
+
+$$
+\frac{1}{C_{\text{tot}}(V)}=\frac{1}{C_Q(V)}+\frac{1}{C_H(T)},\qquad
+C_H(T)=C_{H,\text{réf}}\left[1+\gamma(T-T_{\text{réf}})\right]\,a_p(T),
+$$
+
+avec $C_{H,\text{réf}}=0{,}50$ F/m² (50 µF/cm²), $\gamma=5\times10^{-4}$ K$^{-1}$ et
+$a_p(T)=\exp[-\lambda\,(T-313{,}15\,\mathrm{K})_+]$, $\lambda=5\times10^{-3}$ K$^{-1}$
+(perte d'accessibilité des pores au-delà de 40 °C). La surface spécifique
+accessible est $300\,000$ m²/kg, soit $C_{\text{tot}}\approx 120$ F/g par électrode.
+
+La conservation de charge impose $q=f_+Q_+(V_+)=f_-Q_-(V_-)$ avec les fractions
+de masse $f_+=Q_-^{\max}/(Q_+^{\max}+Q_-^{\max})=0{,}4953$ et $f_-=0{,}5047$.
+La tension à circuit ouvert est donc
+
+$$
+U_{\text{oc}}(q)=V_+\!\left(q/f_+\right)+V_-\!\left(q/f_-\right),
+\qquad U_{\max}=1{,}9\ \text{V}.
+$$
+
+SymPy vérifie exactement $1/C_{\text{tot}}=1/C_Q+1/C_H$,
+$q/C_Q+q/C_H=q/C_{\text{tot}}$, l'équivalence énergétique
+$\tfrac12 C_{\text{tot}}U^2=q^2/(2C_{\text{tot}})$ et
+$\partial C_{\text{tot}}/\partial C_Q=C_H^2/(C_Q+C_H)^2$.
+
+#### 3.3 ESR et cycles galvanostatiques
+
+$$
+R_{\text{ESR}}(T)=R_c+R_{\text{ion,0}}\exp\!\left[\frac{E_a}{k_B}
+\left(\frac1T-\frac1{T_{\text{réf}}}\right)\right]
++R_{\text{el,0}}\left[1+\alpha(T-T_{\text{réf}})\right],
+$$
+
+$E_a=0{,}15$ eV, $R_{\text{ion,0}}=2\times10^{-5}$, $R_{\text{el,0}}=4\times10^{-6}$,
+$R_c=2\times10^{-6}$ Ω·kg, $\alpha=10^{-3}$ K$^{-1}$. Le courant impose
+$dq/dt=\pm I$ et les tensions $U_{\text{charge}}=U_{\text{oc}}+I R_{\text{ESR}}$,
+$U_{\text{décharge}}=U_{\text{oc}}-I R_{\text{ESR}}$ ; les bornes de charge et de
+décharge sont résolues par bissection (sans SciPy). Les densités sont
+
+$$
+E_{\text{sp}}=\frac{1}{3600}\int U\,dq\ \text{(Wh/kg)},\qquad
+P_{\text{sp}}=I\,\overline{U}\ \text{(W/kg)}.
+$$
+
+### 4. Résultats de la validation
+
+Commande : `python -m pytest -v` → **187 tests passés** (164 + 23), soit 100 %.
+
+| Contrôle | Résultat | Tolérance / référence |
+|---|---|---|
+| $C_Q=e^2\mathrm{DOS}/A_{\text{cell}}$ | accord relatif $<10^{-14}$ | formule exacte |
+| $C_{\text{tot}}<\min(C_Q,C_H)$ (2 électrodes × 2 $T$) | vrai sur 25 potentiels | série stricte |
+| SymPy série / tension / énergie / dérivée | résidus $=0$ | exact |
+| Conservation $Q_{\text{charge}}=Q_{\text{décharge}}+Q_{\text{restant}}$ | rel. $<10^{-12}$ (3 courants) | exact |
+| $\eta_{\text{coulombique}}$ à 10 / 100 / 1000 A/kg | 0,9999 / 0,9986 / 0,9861 | $>0{,}9$ |
+| ESR 25 → 50 °C | $26{,}00\to18{,}83$ µΩ·kg | décroissance |
+| Rétention à 47 °C (Matam) | **98,11 %** | $>94$ % |
+| Rétention à 40 / 50 °C | 100,65 % / 97,03 % | pic puis baisse |
+| Figure 300 dpi | 604 102 octets, pHYs $\approx300$ dpi | ±1 dpi |
+
+**Points Ragone (25 °C) :**
+
+| Courant (A/kg) | Énergie (Wh/kg) | Puissance (W/kg) | Capacité (mAh/g) | $\eta_{\text{coul}}$ |
+|---:|---:|---:|---:|---:|
+| 1 | 15,37 | 1,0 | 16,17 | 1,0000 |
+| 100 | 15,29 | 94,8 | 16,12 | 0,9986 |
+| 1000 | 14,55 | 925,2 | 15,72 | 0,9861 |
+| 4000 | 12,20 | 3390,6 | 14,40 | 0,9418 |
+| 8000 | 9,39 | 5951,6 | 12,62 | 0,8766 |
+
+La cellule délivre $15{,}4$ Wh/kg à faible régime et conserve $9{,}4$ Wh/kg à
+presque 6 kW/kg : elle dépasse nettement les supercondensateurs commerciaux
+(~8 Wh/kg à 100 W/kg) tout en restant, comme attendu, sous les batteries Li-ion
+(~225 Wh/kg). À Matam, la baisse d'ESR (26,00 → 19,48 µΩ·kg) compense presque
+entièrement la dégradation des pores : la capacité maintenue est de 98,11 %,
+supérieure au seuil de 94 % exigé.
+
+### 5. Figure de publication
+
+`results/figures/night7_ragone_mxene_sahel.png` — 300 dpi — quatre panneaux :
+
+1. **(a)** diagramme de Ragone log-log comparant les MXènes topologiques à 25 °C
+   et à Matam (47 °C) aux batteries Li-ion et aux supercondensateurs commerciaux
+   (bandes de dispersion incluses) ;
+2. **(b)** ESR de 25 à 50 °C avec le point de fonctionnement de Matam ;
+3. **(c)** cycles galvanostatiques charge/décharge à 500 A/kg et 25 / 47 °C ;
+4. **(d)** rétention de capacité de 25 à 50 °C avec le seuil à 94 % et le point
+   de Matam.
+
+La figure est régénérée à chaque passage de la suite pytest.
+
+### 6. Bilan définitif du projet
+
+Les sept nuits forment une chaîne complète et validée : cristallographie et
+Tight-Binding (1) → courbure de Berry et invariant de Chern (2) → états de bord
+chiraux (3) → optique AM1.5G et Shockley–Queisser (4) → thermodynamique
+sahélienne (5) → EDP de transport et $J(V)$ (6) → stockage électrochimique
+MXène sans plomb et diagramme de Ragone (7). Aucune dépendance SciPy n'a été
+introduite ; 187 tests et sept figures de publication sont reproduits à chaque
+exécution de `python -m pytest`.
+
+**Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
