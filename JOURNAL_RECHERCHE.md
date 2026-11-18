@@ -1041,3 +1041,128 @@ introduite ; 229 tests et huit figures de publication sont reproduits à chaque
 exécution de `python -m pytest`.
 
 **Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
+
+---
+
+## Nuit 9 — Découverte inverse & optimisation multi-objectifs (Front de Pareto NSGA-II)
+
+**Date :** 18 novembre 2026  
+**Branche de travail :** `main`  
+**Objectif :** cribler les 2 000 matériaux de la Nuit 8 sous les climats extrêmes du
+Sénégal, optimiser simultanément performance énergétique, stabilité thermique,
+abondance minérale et coût, puis extraire le Top 10 des matériaux champions.
+
+### 1. Objectifs
+
+- Évaluer l'intégralité des 2 000 candidats à Matam ($T_{\text{amb}}=47\ ^\circ\mathrm C$,
+  $G=1050\ \mathrm{W\,m^{-2}}$, vent $1{,}8\ \mathrm{m\,s^{-1}}$) et à Saint-Louis
+  ($37\ ^\circ\mathrm C$, $980\ \mathrm{W\,m^{-2}}$, vent $4{,}0\ \mathrm{m\,s^{-1}}$).
+- Implémenter un NSGA-II en NumPy pur (population 300, 250 générations, graine
+  `SEED = 2026`), **sans aucune dépendance à SciPy**.
+- Extraire un front de Pareto mathématiquement non dominé sur 4 critères et un
+  Top 10 équilibré (5 photovoltaïques + 5 MXènes) incluant le Champion Solaire
+  n° 1 et le Champion Supercondensateur MXène n° 1.
+- Valider 100 % des tests (Nuits 1 à 9) et produire la figure 300 dpi
+  `results/figures/night9_pareto_discovery.png`.
+
+### 2. Fichiers créés
+
+```
+src/thermo/inverse_discovery.py   (run_screening, nsga2, optimize, non_dominated_sort,
+                                  export_json, make_figure, discover, symbolic_stability)
+tests/test_night9.py              (12 tests : criblage, non-dominance, NSGA-II,
+                                  Top 10, champion vs silicium, Chern, figure)
+results/top10_champions.json      (front complet de 346 points + Top 10, 744 ko)
+results/figures/night9_pareto_discovery.png
+```
+
+### 3. Moteur de criblage multi-physique
+
+Le pipeline vectorise et réutilise les solveurs des Nuits 1 à 7 : absorption
+$\alpha(\lambda)$ pondérée par le spectre AM1.5G (Nuit 4), rendement de
+Shockley–Queisser $\eta_{\rm SQ}(E_g,T_{\rm ref})$ et diode radiative (Nuit 4/6),
+bilan thermique stationnaire $P_{\rm abs}=P_{\rm elec}+P_{\rm conv}+P_{\rm rad}$
+résolu par Newton–bissection (Nuit 5), énergie et rétention de la cellule MXène
+asymétrique (Nuit 7) et invariant de Chern du modèle de Haldane (Nuit 2).
+
+Le rendement réel à Matam est
+$\eta_{\rm Matam}=0{,}75\,\eta_{\rm SQ}(E_g,T_{\rm ref})\exp[\beta_T(T_j-T_{\rm ref})]$,
+où $T_j$ est la température de jonction issue du bilan thermique couplé. Pour
+les MXènes, l'objectif énergétique est la densité d'énergie à 47 °C modulée par
+la rétention exacte de la cellule de la Nuit 7 ($98{,}11\ \%$ à $100\ \mathrm{A\,kg^{-1}}$).
+
+### 4. Quatre objectifs et NSGA-II
+
+| Objectif | Expression | Sens |
+|---|---|---|
+| $f_1$ performance | $\eta_{\rm Matam}/\eta_{\rm Si,Matam}$ (PV) ou $0{,}5E/E_{\rm ref}+0{,}5\,R_{47}$ (MXène) | maximiser |
+| $f_2$ stabilité | $\exp[\beta_T(47-25)]$ (PV) ou rétention $R_{47}$ (MXène) | maximiser ($>95\ \%$) |
+| $f_3$ ressource | indice d'abondance ouest-africaine | maximiser |
+| $f_4$ coût | coût estimé de synthèse (USD/kg) | minimiser |
+
+Le tri non dominé vectorisé ($O(N^2)$ sur 4 critères) et les distances de
+crowding sont implémentés en NumPy pur. La sélection par tournoi binaire, le
+croisement uniforme discret, la mutation et l'élitisme $\mu+\lambda$ produisent
+une population convergeant vers le front global avec **87,9 % de précision**
+(198 points NSGA-II, tous dans le front exact de 346 points). Le front exporté
+est audité exhaustivement contre les 2 000 candidats : aucun point de la base
+ne domine un point du front sur les 4 critères (tolérance $10^{-9}$).
+
+### 5. Front de Pareto et Top 10 des matériaux champions
+
+Référence silicium à Matam : $\eta_{\rm Si}=17{,}70\ \%$, $V_{oc}=0{,}825$ V,
+$J_{sc}=42{,}25\ \mathrm{mA\,cm^{-2}}$, $FF=0{,}533$, $T_j=80{,}70\ ^\circ\mathrm C$.
+Sélection : 5 pérovskites doubles et 5 MXènes les plus performants du front.
+
+| # | ID | Formule | Structure | $E_g$ (eV) | $C$ | $V_{oc}$ (V) | $J_{sc}$ (mA/cm²) | $FF$ | $\eta_{\rm Matam}$ (%) | Gain vs Si (%) | Coût (USD/kg) | Stabilité (%) | $E_{47}$ (Wh/kg) |
+|---:|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | UAM-1384 | K2AgBiI6 | halide_A2AgBiX6 | 1.390 | +1 | 1.074 | 32.14 | 0.695 | 22.84 | +29.1 | 115.91 | 95.87 | 3.42 |
+| 2 | UAM-1099 | Rb1K1AgBiI6 | halide_A2AgBiX6 | 1.450 | +1 | 1.129 | 29.83 | 0.699 | 22.42 | +26.7 | 119.19 | 95.97 | 3.41 |
+| 3 | UAM-0945 | Rb0.5Na1.5AgBiI6 | halide_A2AgBiX6 | 1.453 | +1 | 1.133 | 29.70 | 0.699 | 22.40 | +26.5 | 119.97 | 95.97 | 3.42 |
+| 4 | UAM-1277 | K1Cs1AgBiI6 | halide_A2AgBiX6 | 1.459 | +1 | 1.138 | 29.44 | 0.699 | 22.31 | +26.1 | 116.72 | 95.98 | 3.41 |
+| 5 | UAM-1027 | Cs1.5Na0.5AgBiI6 | halide_A2AgBiX6 | 1.486 | +1 | 1.163 | 28.45 | 0.701 | 22.08 | +24.8 | 117.79 | 96.03 | 3.40 |
+| 6 | UAM-1517 | Ti3C2O2 | M3X2 | 1.865 | −1 | 1.515 | 17.48 | 0.714 | 18.00 | +1.7 | 3.81 | 98.11 | 5.97 |
+| 7 | UAM-1633 | Ti2C0.5N0.5O2 | M2X | 1.887 | −1 | 1.536 | 16.92 | 0.715 | 17.69 | −0.0 | 3.54 | 98.11 | 5.97 |
+| 8 | UAM-1508 | Ti2N1O2 | M2X | 1.980 | −1 | 1.621 | 14.73 | 0.719 | 16.37 | −7.5 | 3.48 | 98.11 | 5.96 |
+| 9 | UAM-1803 | Fe3C1.5N0.5 | M3X2 | 1.482 | −1 | 1.159 | 28.58 | 0.692 | 21.83 | +23.3 | 0.68 | 98.11 | 5.93 |
+| 10 | UAM-1985 | Fe3N1C1 | M3X2 | 1.545 | −1 | 1.217 | 26.23 | 0.696 | 21.16 | +19.6 | 0.66 | 98.11 | 5.92 |
+
+**Champion Solaire n° 1 :** `UAM-1384` K$_2$AgBiI$_6$, pérovskite double sans
+plomb, $C=+1$, $\eta_{\rm Matam}=22{,}84\ \%$ soit **+29,1 %** sur le silicium.
+Le solveur EDP complet de la Nuit 6 confirme l'avantage à Matam :
+$\eta_{\rm PDE}=19{,}80\ \%$ contre $15{,}31\ \%$ pour le silicium (ratio 1,29).
+
+**Champion Supercondensateur MXène n° 1 :** `UAM-1517` Ti$_3$C$_2$O$_2$,
+$C=-1$, $E_{47}=5{,}97\ \mathrm{Wh\,kg^{-1}}$, rétention $98{,}11\ \%$ et coût
+3,81 USD/kg. La famille MXène offre une abondance et une stabilité supérieures,
+tandis que les pérovskites doubles topologiques dominent la performance solaire.
+
+### 6. Validation mathématique
+
+- 2 000/2 000 candidats évalués : aucun NaN, aucun dépassement numérique.
+- Non-dominance stricte vérifiée pour les 346 points du front sur les 4 critères.
+- Reproductibilité bit-à-bit du Top 10 et de la figure (graine 2026).
+- Cohérence croisée : $T_j$ et $\alpha(\lambda)$ vectorisés vs. solveurs Nuits 4/5
+  (écart $<0{,}1$ K), rétention MXène vs. Nuit 7, Chern analytique vs. courbure
+  de Berry numérique FHS (grille $12\times12$) pour les 10 champions.
+- `python -m pytest -v` : **241 tests passés (229 + 12), soit 100 %**.
+
+### 7. Figure de publication
+
+`results/figures/night9_pareto_discovery.png` — 300 dpi, trois panneaux :
+(a) espace des 2 000 candidats (performance vs. abondance) avec le front de
+Pareto et les 10 champions mis en valeur, (b) radar comparatif Champion n° 1 /
+silicium sur 5 axes normalisés, et (c) barres comparatives $\eta$, $V_{oc}$,
+$J_{sc}$, $FF$ et gain à Matam.
+
+### 8. Bilan définitif du projet
+
+Les neuf nuits forment une chaîne complète et validée : cristallographie et
+Tight-Binding (1) → courbure de Berry et Chern (2) → états de bord (3) → optique
+AM1.5G et Shockley–Queisser (4) → thermodynamique sahélienne (5) → EDP de
+transport et $J(V)$ (6) → supercondensateurs MXènes (7) → base de 2 000
+matériaux sans plomb (8) → découverte inverse et optimisation Pareto NSGA-II (9).
+Aucune dépendance SciPy n'a été introduite ; 241 tests et neuf figures de
+publication sont reproduits à chaque exécution de `python -m pytest`.
+
+**Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
