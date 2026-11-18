@@ -576,3 +576,194 @@ appliquée au climat sahélien (Nuit 5). Aucune dépendance SciPy n'a été intr
 les figures de publication sont reproduites à chaque passage de la suite pytest.
 
 **Diffusion prévue :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
+
+---
+
+## Nuit 6 — Équations aux dérivées partielles non linéaires : dérive–diffusion et courbes $J(V)$
+
+**Date :** 18 novembre 2026 (suite du sprint accéléré)  
+**Branche de travail :** `main`  
+**Objectif :** fermer la chaîne physique en résolvant le système EDP couplé de la
+cellule photovoltaïque, et en reliant directement les paramètres électriques au
+climat réel du Sénégal via la température de jonction $T_j$ de la Nuit 5.
+
+### 1. Objectifs
+
+- Implémenter en Python pur (numpy, sympy, matplotlib, **aucune dépendance SciPy**)
+  un solveur stationnaire 1D Poisson–dérive–diffusion discrétisé par le schéma
+  exponentiel conservatif exact de Scharfetter–Gummel.
+- Coupler le solveur à $T_j$ issue du bilan thermodynamique de la Nuit 5 et au
+  flux de photons AM1.5G de la Nuit 4.
+- Extraire automatiquement $J(V)$, $V_{oc}$, $J_{sc}$, $FF$ et $\eta_{\text{élec}}$
+  pour deux matériaux (pérovskite/topologique, silicium) et trois climats.
+- Valider l'équilibre thermodynamique, la conservation exacte du courant total,
+  les relations d'Einstein et de Shockley (SymPy), les tendances thermiques
+  25–50 °C, et produire la figure 300 dpi `night6_jv_curves_sahel.png`.
+
+### 2. Fichiers créés
+
+```
+src/pde/__init__.py
+src/pde/carrier_transport.py   (DeviceConfig, CarrierSolution, JVResult,
+                                bernoulli, solve_dark_equilibrium,
+                                solve_carrier_transport, solve_jv_curve,
+                                junction_temperature, site_electrical_result,
+                                temperature_sweep, verifications symboliques)
+tests/test_night6.py           (33 tests numériques, symboliques et de figure)
+results/figures/night6_jv_curves_sahel.png
+```
+
+### 3. Équations implémentées
+
+#### 3.1 Système couplé et relation d'Einstein
+
+Dans les unités SI, avec $\phi$ le potentiel électrostatique (V), $n,p$ les
+densités de porteurs (m$^{-3}$) et $T_j$ la température de jonction :
+
+$$
+\frac{d}{dx}\!\left(\varepsilon\frac{d\phi}{dx}\right)
+= -q\,(p-n+N_D-N_A),
+\qquad
+\frac{1}{q}\frac{dJ_n}{dx}=R-G,
+\qquad
+\frac{1}{q}\frac{dJ_p}{dx}=G-R,
+$$
+
+$$
+J_n=-q\mu_n n\frac{d\phi}{dx}+qD_n\frac{dn}{dx},
+\qquad
+J_p=-q\mu_p p\frac{d\phi}{dx}-qD_p\frac{dp}{dx},
+\qquad
+D_{n,p}=V_T\mu_{n,p},\quad V_T=\frac{k_BT_j}{q}.
+$$
+
+La relation d'Einstein est vérifiée symboliquement en annulant le flux net de
+porteurs à l'équilibre : $-mu\,n\,\partial_x\phi+D\,\partial_x n=0$ avec
+$n\propto e^{\phi/V_T}$ donne exactement $D=mu\,k_BT_j/q$ (résidu SymPy nul).
+Les mobilités suivent $\mu(T)=\mu_{300}(T/300)^{-3/2}$ et la densité intrinsèque
+$n_i(T)=\sqrt{N_cN_v}\,e^{-E_g/2k_BT}$, avec $N_{c,v}\propto T^{3/2}$.
+
+#### 3.2 Schéma exponentiel de Scharfetter–Gummel
+
+Sur un intervalle $[x_i,x_{i+1}]$ de pas $h$ où $\phi$ est supposé linéaire et le
+courant constant, l'intégration exacte des équations de dérive–diffusion donne
+les flux aux interfaces :
+
+$$
+J_{n,i+1/2}=\frac{q\mu_n V_T}{h}\Big[B(\Delta u_i)\,n_{i+1}-B(-\Delta u_i)\,n_i\Big],
+$$
+
+$$
+J_{p,i+1/2}=\frac{q\mu_p V_T}{h}\Big[B(\Delta u_i)\,p_i-B(-\Delta u_i)\,p_{i+1}\Big],
+\qquad
+\Delta u_i=\frac{\phi_{i+1}-\phi_i}{V_T},
+$$
+
+où $B(z)=z/(e^z-1)$ est la fonction de Bernoulli (évaluée par sa série pour
+$|z|<10^{-5}$ et par ses asymptotes $B\to0$, $B(-z)\to-z$). Le développement
+$B(z)=1-z/2+z^2/12+O(z^3)$ reproduce le schéma centré à faible champ et est
+vérifié avec SymPy.
+
+En variables de Slotboom $w=ne^{-\phi/V_T}=n_ie^{-\phi_n/V_T}$ et
+$z=pe^{\phi/V_T}=n_ie^{\phi_p/V_T}$, ces flux deviennent
+$J_{n,i+1/2}=A_i(w_{i+1}-w_i)$ et $J_{p,i+1/2}=C_i(z_i-z_{i+1})$ avec
+$A_i,C_i>0$. La somme des deux équations de continuite donne alors
+$J_{n,i+1/2}+J_{p,i+1/2}=\text{constante}$ **identiquement**, indépendamment du
+pas de maillage. À l'équilibre ($\phi_n=\phi_p=0$), $w=z=n_i$ et les deux courants
+s'annulent exactement (pas une tolérance numérique).
+
+#### 3.3 Recombinaison, éclairement et conditions aux limites
+
+Recombinaison Shockley–Read–Hall à pièges mi-gap ($n_1=p_1=n_i$) :
+
+$$
+R=\frac{np-n_i^2}{\tau_p(n+n_i)+\tau_n(p+n_i)},\qquad R=0\ \text{si}\ np=n_i^2.
+$$
+
+Génération optique issue du spectre AM1.5G de la Nuit 4 :
+$G(x)=\eta_Q\,\Phi_{\text{sun}}(E_g)\,(G_{\text{site}}/1000)\,\alpha e^{-\alpha x}$,
+où $\Phi_{\text{sun}}$ est le flux de photons au-dessus du gap. Les contacts sont
+sélectifs (passivés) : $p(0)=N_A$, $n(L)=N_D$, et flux minoritaire nul aux deux
+extrémités. La polarisation impose $w(L)/w(0)=z(0)/z(L)=e^{V/V_T}$, soit une
+barrière $V_{bi}-V$ avec $V_{bi}=V_T\ln(N_AN_D/n_i^2)$.
+
+#### 3.4 Résolution et courbe $J(V)$
+
+Itérations de Gummel : (i) Newton amorti sur Poisson à $w,z$ figés, (ii) résolution
+des deux systèmes tridiagonaux linéaires de continuité (algorithme de Thomas),
+avec initialisation par transition tanh de largeur $\max(L_D,2h)$ ($L_D$ = longueur
+de Debye). Le potentiel $T_j$ est fourni par `energy_balance(site, module)` de la
+Nuit 5. Le balayage adaptatif en tension (pas $\leq0{,}04$ V, arrêt après $V_{oc}$)
+fournit $J_{sc}=J(0)$, $V_{oc}$ par bissection, et le point de puissance maximale
+par recherche dorée : $FF=P_{max}/(V_{oc}J_{sc})$, $\eta=P_{max}/G_{\text{site}}$.
+Le courant renvoyé est $J=-(J_n+J_p)$ : $J(0)=J_{sc}>0$ et $J(V_{oc})=0$.
+
+SymPy vérifie en outre $J(V)=J_{sc}-J_0(e^{qV/k_BT}-1)$,
+$V_{oc}=V_T\ln(1+J_{sc}/J_0)$, $J(V_{oc})=0$ et la condition du point de puissance
+maximale $\partial_V(VJ)=0 \Leftrightarrow J_{sc}-J_0[e^{v}(1+v)-1]=0$.
+
+### 4. Résultats de la validation
+
+Commande : `python -m pytest -v` → **164 tests passés** (19 + 25 + 35 + 52 + 33), soit 100 %.
+
+| Contrôle | Résultat | Tolérance / référence |
+|---|---|---|
+| $J(V=0)$ à l'obscurité (6 cas) $|J|<10^{-12}$ | $0$ (identité sur $w,z$) | $<10^{-12}$ A/m² |
+| $np=n_i^2$ à l'équilibre | erreur relative $<10^{-12}$ | exact |
+| Conservation $J_n+J_p$ sous éclairement | $\max|J_{tot}-\overline{J_{tot}}|\approx1{,}5\times10^{-7}$ A/m² | $<10^{-6}$ A/m² |
+| $V_{bi}$ théorique vs solution | accord relatif $<10^{-8}$ | $V_T\ln(N_AN_D/n_i^2)$ |
+| Facteur d'idéalité (dark, 0,4–0,6 V) | $1<n<2{,}2$ | diode réelle |
+| SymPy Einstein / Shockley / SG | résidus $=0$ | exact |
+| Figure 300 dpi | > 60 ko, pHYs $\approx300$ dpi | ±1 dpi |
+
+**Points de fonctionnement électriques (cellule couplée à $T_j$ du site) :**
+
+| Site | Matériau | $T_j$ (°C) | $J_{sc}$ (A/m²) | $V_{oc}$ (V) | $FF$ | $\eta_{\text{élec}}$ (%) | $P_{max}$ (W/m²) |
+|---|---|---:|---:|---:|---:|---:|---:|
+| Dakar | pérovskite / topologique | 49,87 | 246,07 | 0,9367 | 0,8270 | 21,18 | 190,6 |
+| Dakar | silicium cristallin | 53,34 | 327,22 | 0,5853 | 0,8069 | 17,17 | 154,5 |
+| Saint-Louis | pérovskite / topologique | 56,02 | 267,90 | 0,9282 | 0,8243 | 20,91 | 205,0 |
+| Saint-Louis | silicium cristallin | 59,56 | 356,25 | 0,5761 | 0,8021 | 16,80 | 164,6 |
+| Matam | pérovskite / topologique | 75,29 | 286,91 | 0,8947 | 0,8131 | 19,88 | 208,7 |
+| Matam | silicium cristallin | 80,70 | 381,50 | 0,5381 | 0,7833 | 15,31 | 160,8 |
+
+À Matam, malgré un $J_{sc}$ plus faible (gap plus large), le matériau pérovskite
+/topologique délivre **$+0{,}357$ V de $V_{oc}$**, un facteur de forme supérieur
+de $3{,}0$ points et **$+30\%$ de rendement électrique** (19,88 % contre 15,31 %).
+$J_{sc}$ croît avec l'irradiance du site tandis que $V_{oc}$ et $FF$ chutent avec
+$T_j$ : le dilemme courant/tension est ici tranché en faveur de la pérovskite.
+
+**Dérive thermique 25 → 50 °C (sous 1000 W/m²) :**
+
+| Matériau | $V_{oc}$(25 °C) | $V_{oc}$(50 °C) | $FF$(25 °C) | $FF$(50 °C) | $\eta$(25 °C) | $\eta$(50 °C) |
+|---|---:|---:|---:|---:|---:|---:|
+| Pérovskite / topologique | 0,9862 V | 0,9401 V | 0,8431 | 0,8282 | 22,74 % | 21,29 % |
+| Silicium cristallin | 0,6416 V | 0,5947 V | 0,8305 | 0,8104 | 19,39 % | 17,53 % |
+
+Les six points de la plage 25–50 °C sont strictement décroissants en $V_{oc}$,
+$FF$ et $\eta$, avec $J_{sc}$ constant à moins de 2 % près — comportement attendu
+d'une cellule dont la recombinaison radiative et SRH croît avec $T_j$.
+
+### 5. Figure de publication
+
+`results/figures/night6_jv_curves_sahel.png` — 300 dpi — quatre panneaux :
+
+1. **(a)** $J(V)$ des trois climats pour la pérovskite, avec $V_{oc}$ (cercles) et
+   point de puissance maximale (carrés) ;
+2. **(b)** $P(V)=J(V)\,V$ correspondantes et maximum de puissance ;
+3. **(c)** profils internes du potentiel électrostatique $\phi(x)$ à $V=0$ ;
+4. **(d)** profils $n(x)$ (traits pleins) et $p(x)$ (tirets) en échelle
+   logarithmique, montrant la zone de déplétion centrale.
+
+La figure est régénérée à chaque passage de la suite pytest.
+
+### 6. Bilan définitif du projet
+
+Les six nuits forment une chaîne complète et validée : cristallographie et
+Tight-Binding (1) → courbure de Berry et invariant de Chern (2) → états de bord
+chiraux (3) → optique AM1.5G et limite de Shockley–Queisser (4) → bilan
+thermodynamique sahélien (5) → EDP de transport et caractéristiques $J(V)$ (6).
+Aucune dépendance SciPy n'a été introduite ; 164 tests et six figures de
+publication sont reproduits à chaque exécution de `python -m pytest`.
+
+**Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
