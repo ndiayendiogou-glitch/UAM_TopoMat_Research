@@ -390,3 +390,189 @@ Sprint validé : `python -m pytest -q` → **79 tests passés** (19 Nuit 1 + 25 
 - Diffusion prévue : Twin Transition Summit, 1er décembre 2026.
 
 ---
+
+## Nuit 5 — Bilan thermodynamique sahélien et résistance thermique à 45 °C
+
+**Date :** 18 novembre 2026 (suite du sprint accéléré)  
+**Branche de travail :** `main`  
+**Objectif :** coupler les moteurs des Nuits 1 à 4 au climat réel du Sénégal et quantifier
+l'avantage d'un matériau à gap optimisé sous les températures extrêmes de Matam.
+
+### 1. Objectifs
+
+- Résoudre le bilan énergétique stationnaire couplant absorption solaire pondérée par
+  $\alpha(\lambda)$, extraction électrique $\eta(E_g,T_j)$, convection (naturelle + forcée)
+  et rayonnement infrarouge de Stefan–Boltzmann.
+- Calculer la dérive thermique exacte $\beta_T=(1/\eta)\,d\eta/dT$ et le gain énergétique
+  annuel (kWh/m²/an) du matériau optimisé face au silicium cristallin.
+- Vérifier symboliquement (SymPy) la dérivée analytique utilisée par le solveur de Newton.
+- Valider 100 % des tests (Nuits 1 à 5) et produire la figure 300 dpi
+  `results/figures/night5_sahel_thermal_balance.png`.
+
+### 2. Fichiers créés
+
+```
+src/thermo/sahel_climate.py   (SahelSite, PVModule, solve_junction_temperature,
+                               brent_junction_temperature, energy_balance,
+                               thermal_drift_coefficient, annual_yield,
+                               annual_energy_gain, symbolic_balance_derivative)
+tests/test_night5.py          (52 tests numériques, symboliques et de figure)
+results/figures/night5_sahel_thermal_balance.png
+```
+
+Aucune dépendance à SciPy n'a été introduite (numpy, sympy, matplotlib, pytest).
+
+### 3. Équations implémentées
+
+#### 3.1 Conditions climatiques de référence
+
+| Site | $T_{amb}$ (°C) | $G$ (W/m²) | $v_{\text{vent}}$ (m/s) |
+|---|---:|---:|---:|
+| Dakar | 31 | 900 | 3,5 |
+| Saint-Louis | 37 | 980 | 4,0 |
+| Matam | 47 | 1050 | 1,8 |
+
+#### 3.2 Bilan de puissance stationnaire
+
+Pour une surface de cellule, à l'équilibre :
+
+$$
+P_{\text{abs}} = \alpha_{\text{sol}}(E_g)\,G,
+\qquad
+P_{\text{élec}} = \eta(E_g,T_j)\,G,
+$$
+
+$$
+P_{\text{conv}} = h_{\text{conv}}(v)\,(T_j-T_{\text{amb}}),
+\qquad
+P_{\text{rad}} = \varepsilon\sigma_{\text{SB}}\left(T_j^4-T_{\text{ciel}}^4\right),
+\qquad
+P_{\text{th}} = U_{\text{ext}}(T_j-T_{\text{entrée}}),
+$$
+
+$$
+\boxed{P_{\text{abs}} = P_{\text{élec}} + P_{\text{conv}} + P_{\text{rad}} + P_{\text{th}}}.
+$$
+
+$P_{\text{th}}$ n'intervient que pour le module hybride PV/T ($U_{\text{ext}}=8$ W/m²/K) ;
+$P_{\text{th}}=0$ pour la cellule photovoltaïque nue. Le ciel est modélisé par une
+dépression de $8$ K : $T_{\text{ciel}}=T_{\text{amb}}-8$ K. La convection suit la
+corrélation standard $h_{\text{conv}}=5{,}7+3{,}8\,v$ (W/m²/K).
+
+L'absorptance spectrale est pondérée par le spectre AM1.5G de la Nuit 4 :
+
+$$
+\alpha_{\text{sol}}(E_g)=
+\frac{\alpha_+ \int_{\lambda<\lambda_g} I(\lambda)\,d\lambda
+     + \alpha_- \int_{\lambda\ge\lambda_g} I(\lambda)\,d\lambda}
+     {\int I(\lambda)\,d\lambda},
+\qquad \lambda_g = hc/E_g,
+$$
+
+avec $\alpha_+=0{,}95$, $\alpha_-=0{,}60$ : $\alpha_{\text{sol}}=0{,}8223$ à $E_g=1{,}45$ eV
+et $0{,}8800$ à $E_g=1{,}12$ eV (le silicium absorbe davantage de photons sous-gap et
+chauffe donc plus).
+
+#### 3.3 Rendement et dérive thermique exacte
+
+$$
+\eta(E_g,T_j)=\eta_{\text{réf}}(E_g)\,
+\exp\!\left[\beta_T(T_j-T_{\text{réf}})\right],
+\qquad T_{\text{réf}}=298{,}15\ \text{K},
+$$
+
+avec $\eta_{\text{réf}}$ déduit de la limite de Shockley–Queisser de la Nuit 4
+($\eta_{\text{réf}}=25{,}64\%$ pour $E_g=1{,}45$ eV et $22{,}74\%$ pour $E_g=1{,}12$ eV).
+La loi exponentielle rend la dérive **exacte et constante** :
+
+$$
+\beta_T=\frac{1}{\eta}\frac{d\eta}{dT}
+=\frac{d\ln\eta}{dT}=-0{,}22\%/\text{K}\ \text{(optimisé)},\quad
+-0{,}45\%/\text{K}\ \text{(silicium)}.
+$$
+
+#### 3.4 Résolution et dérivée analytique
+
+Le résidu $f(T_j)=P_{\text{abs}}-P_{\text{élec}}-P_{\text{conv}}-P_{\text{rad}}-P_{\text{th}}$
+est strictement décroissant, donc admet une racine unique dans
+$[T_{\text{amb}}-20, T_{\text{amb}}+300]$ K. Le solveur est un Newton–Raphson vectorisé
+avec dérivée analytique et sauvegarde par bissection ; un Brent scalaire indépendant
+sert de vérification croisée (accord à $10^{-9}$ K près). La dérivée est
+
+$$
+\frac{df}{dT_j}
+= -\beta_T\,\eta\,G - h_{\text{conv}}
+  - 4\varepsilon\sigma_{\text{SB}}T_j^3 - U_{\text{ext}} < 0.
+$$
+
+SymPy confirme exactement $\partial f/\partial T_j$ et $\partial(\ln\eta)/\partial T_j=\beta_T$
+(résidu symbolique nul), et un test compare la dérivée analytique à une dérivée centrée.
+
+#### 3.5 Production annuelle
+
+Intégration horaire sur une année type (8760 pas) avec cycle solaire diurne
+($G=G_{\text{max}}\sin[\pi(t-5)/12]$), cycle saisonnier d'amplitude 6–9 K et pic de
+température à 15 h. Le gain annuel est $\Delta E=E_{\text{opt}}-E_{\text{Si}}$.
+
+### 4. Résultats de la validation
+
+Commande : `python -m pytest -v` → **131 tests passés** (19 + 25 + 35 + 52), soit 100 %.
+
+| Contrôle | Résultat | Tolérance / référence |
+|---|---|---|
+| Conservation des flux (6 cas + hybride) | $\|f(T_j)\|\le 8{,}0\times10^{-13}$ W/m² | $<10^{-11}$ W/m² |
+| Newton vs Brent (6 cas) | écart $0$ K | $<10^{-9}$ K |
+| $T_j > T_{\text{amb}}$ (6 cas) | oui | physique |
+| $T_j$ croît avec $G$ / décroît avec $v$ | oui sur 17/16 points | monotone |
+| $\beta_T$ par différence finie | erreur $<10^{-10}$ K$^{-1}$ | exact |
+| Dérivée symbolique SymPy | résidu $=0$ | exact |
+| Figure 300 dpi | 456 861 octets, pHYs $\approx300$ dpi | $\pm1$ dpi |
+
+**Points de fonctionnement (cellule nue) :**
+
+| Site | Matériau | $T_j$ (°C) | $\eta(T_j)$ (%) | $P_{\text{abs}}$ | $P_{\text{élec}}$ | $P_{\text{conv}}$ | $P_{\text{rad}}$ (W/m²) | $f$ (W/m²) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Dakar | optimisé | 49,87 | 24,27 | 740,09 | 218,46 | 358,56 | 163,07 | $4{,}6\times10^{-13}$ |
+| Dakar | silicium | 53,34 | 20,02 | 791,96 | 180,15 | 424,48 | 187,33 | $2{,}3\times10^{-13}$ |
+| Saint-Louis | optimisé | 56,02 | 23,95 | 805,87 | 234,68 | 397,42 | 173,77 | $-1{,}1\times10^{-13}$ |
+| Saint-Louis | silicium | 59,56 | 19,46 | 862,36 | 190,75 | 471,58 | 200,02 | $-8{,}0\times10^{-13}$ |
+| Matam | optimisé | 75,29 | 22,95 | 863,44 | 241,01 | 354,72 | 267,71 | $-2{,}3\times10^{-13}$ |
+| Matam | silicium | 80,70 | 17,70 | 923,95 | 185,83 | 422,58 | 315,54 | $1{,}1\times10^{-13}$ |
+
+À Matam, le matériau optimisé fonctionne **5,4 K plus froid** et délivre **29,7 % de
+puissance électrique instantanée en plus** (241,0 contre 185,8 W/m²). Le module hybride
+PV/T abaisse $T_j$ de 75,29 °C à 60,98 °C et porte $P_{\text{élec}}$ à 248,7 W/m²,
+l'extraction thermique évacuant le surplus de chaleur.
+
+**Bilan annuel :**
+
+| Site | Optimisé (kWh/m²/an) | Silicium (kWh/m²/an) | Gain absolu | Gain relatif |
+|---|---:|---:|---:|---:|
+| Dakar | 617,4 | 521,5 | +95,9 | +18,4 % |
+| Saint-Louis | 665,4 | 555,8 | +109,6 | +19,7 % |
+| Matam | 688,1 | 550,4 | +137,8 | **+25,0 %** |
+
+Le gain croît avec la sévérité thermique : c'est précisément là que la faible dérive
+$\beta_T$ du matériau à gap optimisé est la plus décisive.
+
+### 5. Figure de publication
+
+`results/figures/night5_sahel_thermal_balance.png` — 300 dpi — deux panneaux :
+
+1. **(a)** $T_j$ (axe gauche, traits pleins) et $\eta(T_j)$ (axe droite, tirets) pour
+   $T_{\text{amb}}\in[25,55]$ °C aux conditions $G$ et vent de chaque site ; les étoiles
+   marquent les trois points de conception.
+2. **(b)** Production électrique annuelle comparée à Dakar, Saint-Louis et Matam, avec
+   les gains absolus et relatifs annotés sur les barres.
+
+La figure est régénérée à chaque exécution de pytest.
+
+### 6. Bilan du projet
+
+Les cinq nuits forment une chaîne complète et validée : cristallographie et
+Tight-Binding (Nuit 1) → courbure de Berry et invariant de Chern (Nuit 2) → états de bord
+chiraux (Nuit 3) → optique et limite de Shockley–Queisser (Nuit 4) → thermodynamique
+appliquée au climat sahélien (Nuit 5). Aucune dépendance SciPy n'a été introduite et
+les figures de publication sont reproduites à chaque passage de la suite pytest.
+
+**Diffusion prévue :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
