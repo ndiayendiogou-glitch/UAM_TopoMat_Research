@@ -33,6 +33,8 @@
 \definecolor{pastelC}{HTML}{ECFDF5}
 \definecolor{emerald}{HTML}{047857}
 \definecolor{gold}{HTML}{B45309}
+\definecolor{steel}{HTML}{93C5FD}
+\definecolor{leggray}{HTML}{94A3B8}
 \pagecolor{glacier}
 
 \graphicspath{{../results/figures/}{./}}
@@ -42,35 +44,36 @@
 \newlength{\colw}
 \setlength{\colw}{\dimexpr(\textwidth-18mm)/3\relax}
 \newlength{\colheight}
-\setlength{\colheight}{700mm}
+\setlength{\colheight}{880mm}
 
-\newcommand{\sect}[1]{\textcolor{navy}{\fontsize{56}{64}\selectfont\textbf{#1}}\par\vspace{5mm}}
+\newcommand{\sect}[1]{\textcolor{navy}{\fontsize{60}{68}\selectfont\textbf{#1}}\par\vspace{6mm}}
 \newcommand{\bulletline}[1]{%
   \textcolor{green}{\fontsize{38}{38}\selectfont\textbf{\textbullet}}\quad
-  \textcolor{ink}{\fontsize{38}{54}\selectfont #1}\par\vspace{5mm}}
-\newcommand{\capfig}[1]{\textcolor{muted}{\fontsize{26}{31}\selectfont #1}\par}
+  \textcolor{ink}{\fontsize{38}{50}\selectfont #1}\par\vspace{4mm}}
+\newcommand{\capfig}[1]{\textcolor{muted}{\fontsize{26}{32}\selectfont #1}\par}
+\newcommand{\swatch}[1]{\textcolor{#1}{\rule{7mm}{7mm}}\quad}
 
 \newcommand{\kpi}[4]{%
 \begin{tcolorbox}[width=\kpiw,colback=#1,colframe=#1,boxrule=0pt,
                    arc=5mm,outer arc=5mm,
-                   left=6mm,right=6mm,top=12mm,bottom=12mm,nobeforeafter]
-  \color{#2}{\fontsize{104}{110}\selectfont\textbf{#3}}\par\vspace{3mm}
-  \color{#2}{\fontsize{28}{33}\selectfont #4}
+                   left=7mm,right=7mm,top=14mm,bottom=14mm,nobeforeafter]
+  \color{#2}{\fontsize{112}{118}\selectfont\textbf{#3}}\par\vspace{4mm}
+  \color{#2}{\fontsize{30}{36}\selectfont #4}
 \end{tcolorbox}}
 
 \newcommand{\champcard}[3]{%
 \begin{tcolorbox}[width=\linewidth,colback=white,colframe=#1,boxrule=1.2mm,
                    arc=4mm,outer arc=4mm,
-                   left=6mm,right=6mm,top=5mm,bottom=5mm,nobeforeafter]
-   \textcolor{#1}{\fontsize{32}{38}\selectfont\textbf{#2}}\par\vspace{3mm}
-   \textcolor{ink}{\fontsize{28}{38}\selectfont #3}
+                   left=7mm,right=7mm,top=6mm,bottom=6mm,nobeforeafter]
+   \textcolor{#1}{\fontsize{34}{40}\selectfont\textbf{#2}}\par\vspace{4mm}
+   \textcolor{ink}{\fontsize{30}{40}\selectfont #3}
 \end{tcolorbox}}
 
 \tcbset{uamcard/.style={%
   enhanced,arc=6mm,outer arc=6mm,boxrule=0.9mm,
-  left=5mm,right=5mm,top=4mm,bottom=4mm,
-  toptitle=2.5mm,bottomtitle=2.5mm,
-  coltitle=white,fonttitle=\fontsize{38}{44}\selectfont\bfseries,
+  left=7mm,right=7mm,top=6mm,bottom=6mm,
+  toptitle=3mm,bottomtitle=3mm,
+  coltitle=white,fonttitle=\fontsize{40}{46}\selectfont\bfseries,
   width=\linewidth,before skip=0pt,after skip=0pt}}
 
 \newtcolorbox{cardnavy}[2][pastelB]{uamcard,colback=#1,colframe=navy,
@@ -99,10 +102,11 @@
   \begin{minipage}[c]{92mm}\centering
     \includegraphics[width=50mm]{qr_uam_topomat.png}\\[2mm]
     \textcolor{white}{\fontsize{23}{27}\selectfont\textbf{Démo interactive}}\\[1mm]
-    \textcolor{solar}{\fontsize{23}{27}\selectfont\textbf{onrender.com}}
+    \textcolor{solar}{\fontsize{19}{23}\selectfont\textbf{uam-topomat-}}\\
+    \textcolor{solar}{\fontsize{19}{23}\selectfont\textbf{research.onrender.com}}
   \end{minipage}%
   \vspace{9mm}%
-}}\endgroup\par
+ }}\endgroup\par
 \vspace{3mm}
 \noindent\hspace*{-14mm}{\color{solar}\hrule height 2.5mm width \paperwidth}\par
 \vspace{9mm}
@@ -118,11 +122,12 @@
 \vspace{11mm}
 
 % ----------------------------------------------------------------------
-% TROIS COLONNES ÉQUILIBRÉES — 8 CARTES AUX COULEURS UAM
+% TROIS COLONNES ÉQUILIBRÉES — 9 CARTES AUX COULEURS UAM
 % ----------------------------------------------------------------------
 \noindent
-\begin{minipage}[t][\colheight][t]{\colw}
+\begin{minipage}[t]{\colw}
 \raggedright
+\vspace*{-322mm}
 
 \begin{cardnavy}{1. Le défi sahélien}
 \bulletline{1\,500--2\,200 kWh/m$^2$/an de soleil}
@@ -130,7 +135,7 @@
 \bulletline{Twin Transition : énergie + numérique souverain}
 \end{cardnavy}
 
-\vfill
+\vspace{6mm}
 \begin{cardemerald}{2. Pipeline en 5 étapes}
 \bulletline{Cristallographie + Tight-Binding}
 \bulletline{Berry / Chern : topologie certifiée}
@@ -139,20 +144,38 @@
 \bulletline{Découverte inverse NSGA-II}
 
 \begin{center}
-\includegraphics[width=\linewidth]{night6_jv_curves_sahel.png}\\[2mm]
+\includegraphics[width=0.78\linewidth,height=120mm,keepaspectratio]{night6_jv_curves_sahel.png}\\[2mm]
 \capfig{Courbes $J(V)$ en conditions sahéliennes --- 300 dpi}
 \end{center}
 \end{cardemerald}
 
-\vfill
+\vspace{6mm}
 \begin{cardgold}{3. Zéro dépendance SciPy}
 \bulletline{6 théorèmes certifiés symboliquement}
 \bulletline{36 bornes physiques vérifiées}
 \bulletline{316 tests automatisés}
+
+\begin{center}
+\includegraphics[width=0.78\linewidth,height=120mm,keepaspectratio]{night2_haldane_chern_phase.png}\\[2mm]
+\capfig{Phase de Haldane et invariant de Chern --- 300 dpi}
+\end{center}
 \end{cardgold}
 
+\vspace{6mm}
+\begin{cardnavy}{9. Ressources minérales \& souveraineté}
+\bulletline{Bauxite (Guinée) · fer (Libéria, Mauritanie) · or (Sénégal, Mali, Burkina Faso)}
+\bulletline{Phosphates (Sénégal, Togo) · manganèse (Gabon, Ghana) · lithium/graphite en exploration}
+\bulletline{Silicium, plomb et Li-ion encore importés : dépendance totale}
+\bulletline{K$_2$AgBiI$_6$ sans Pb ni Co : substitut local du silicium}
+\bulletline{Ti$_3$C$_2$O$_2$ : stockage souverain et chaîne de valeur régionale}
+\begin{tcolorbox}[width=\linewidth,colback=white,colframe=solar,boxrule=0.9mm,
+                  arc=3mm,outer arc=3mm,left=5mm,right=5mm,top=3mm,bottom=3mm]
+\textcolor{navy}{\fontsize{27}{33}\selectfont\textbf{Objectif : énergie + numérique souverains au Sahel}}
+\end{tcolorbox}
+\end{cardnavy}
+
 \end{minipage}\hfill
-\begin{minipage}[t][\colheight][t]{\colw}
+\begin{minipage}[t]{\colw}
 \raggedright
 
 \begin{cardnavy}{4. 2\,000 matériaux criblés}
@@ -161,12 +184,17 @@
 \bulletline{Front NSGA-II : 198 solutions}
 
 \begin{center}
-\includegraphics[width=\linewidth]{night9_pareto_discovery.png}\\[2mm]
+\includegraphics[width=0.78\linewidth,height=120mm,keepaspectratio]{night9_pareto_discovery.png}\\[2mm]
 \capfig{Espace de Pareto, front NSGA-II et Top 10 --- 300 dpi}
+\end{center}
+\vspace{4mm}
+\begin{center}
+\includegraphics[width=0.78\linewidth,height=120mm,keepaspectratio]{night8_materials_landscape.png}\\[2mm]
+\capfig{Paysage des matériaux criblés --- 300 dpi}
 \end{center}
 \end{cardnavy}
 
-\vfill
+\vspace{6mm}
 \begin{cardemerald}{5. Les deux champions}
 
 \champcard{green}{UAM-1384 --- K$_2$AgBiI$_6$ (solaire)}
@@ -175,13 +203,17 @@
 \champcard{violet}{UAM-1517 --- Ti$_3$C$_2$O$_2$ (stockage)}
   {Gap 1,865 eV $\cdot$ $C=-1$ $\cdot$ 5,97 Wh/kg à 47\,$^\circ$C}
 \begin{center}
-\includegraphics[width=\linewidth]{night7_ragone_mxene_sahel.png}\\[2mm]
+\includegraphics[width=0.78\linewidth,height=120mm,keepaspectratio]{night1_bands_dos.png}\\[2mm]
+\capfig{Bandes électroniques et densité d'états --- 300 dpi}
+\end{center}
+\begin{center}
+\includegraphics[width=0.78\linewidth,height=120mm,keepaspectratio]{night7_ragone_mxene_sahel.png}\\[2mm]
 \capfig{Ragone du supercondensateur MXène --- 300 dpi}
 \end{center}
 \end{cardemerald}
 
 \end{minipage}\hfill
-\begin{minipage}[t][\colheight][t]{\colw}
+\begin{minipage}[t]{\colw}
 \raggedright
 
 \begin{cardgold}{6. Impact au Sénégal}
@@ -190,30 +222,51 @@
 \bulletline{220 FCFA/kWh $\cdot$ 0,55 t CO$_2$/MWh}
 
 \begin{center}
-\includegraphics[width=\linewidth]{night11_senegal_impact.png}\\[2mm]
+\includegraphics[width=0.78\linewidth,height=120mm,keepaspectratio]{night11_senegal_impact.png}\\[2mm]
 \capfig{Bilan multi-régions : MWh, CO$_2$, LCOE et FCFA --- 300 dpi}
 \end{center}
 \vspace{5mm}
-
-\textcolor{navy}{\fontsize{28}{35}\selectfont\textbf{+126,9 MWh/an $\cdot$ 69,8 t CO$_2$/an $\cdot$ 46,2 M FCFA/an $\cdot$ baisse LCOE 44--49\,\%}}
+\begin{tcolorbox}[width=\linewidth,colback=white,colframe=solar,boxrule=0.9mm,
+                  arc=3mm,outer arc=3mm,left=5mm,right=5mm,top=3mm,bottom=3mm]
+\textcolor{navy}{\fontsize{27}{33}\selectfont\textbf{Légende des couleurs des graphiques}}\par\vspace{3mm}
+\swatch{navy}\textcolor{ink}{\fontsize{25}{31}\selectfont Bleu = Couple champion UAM-1384 + UAM-1517}\par\vspace{3mm}
+\swatch{leggray}\textcolor{ink}{\fontsize{25}{31}\selectfont Gris = Silicium + Plomb/Li-ion}\par\vspace{3mm}
+\swatch{solar}\textcolor{ink}{\fontsize{25}{31}\selectfont Orange / Or = Économies M FCFA/an \& gains}
+\end{tcolorbox}
+\vspace{5mm}
+\begin{tcolorbox}[width=\linewidth,colback=pastelC,colframe=green,boxrule=0.8mm,
+                  arc=3mm,outer arc=3mm,left=5mm,right=5mm,top=3mm,bottom=3mm]
+\textcolor{navy}{\fontsize{26}{33}\selectfont\textbf{+126,9 MWh/an $\cdot$ 69,8 t CO$_2$/an}}\\[1mm]
+\textcolor{navy}{\fontsize{26}{33}\selectfont\textbf{46,2 M FCFA/an $\cdot$ baisse LCOE 44--49\,\%}}
+\end{tcolorbox}
 \end{cardgold}
 
-\vfill
+\vspace{6mm}
 \begin{cardnavy}{7. Démonstration live}
 \bulletline{Serveur FastAPI 100\,\% hors ligne}
 \bulletline{Matériau, ville et température au choix}
 \bulletline{Pipeline complet en un seul clic}
 \bulletline{Lancer : \texttt{LANCER\_DEMO\_JURY.bat}}
+
+\begin{center}
+\includegraphics[width=0.78\linewidth,height=120mm,keepaspectratio]{night5_sahel_thermal_balance.png}\\[2mm]
+\capfig{Bilan thermique sahélien --- 300 dpi}
+\end{center}
 \end{cardnavy}
 
-\vfill
+\vspace{6mm}
 \begin{cardemerald}{8. Perspectives}
 \bulletline{DFT + couplage spin--orbite}
 \bulletline{Synthèse de K$_2$AgBiI$_6$ et Ti$_3$C$_2$O$_2$}
 \bulletline{Prototype 1 kWc à Matam}
+
+\begin{center}
+\includegraphics[width=0.78\linewidth,height=120mm,keepaspectratio]{night4_solar_efficiency_vs_temp.png}\\[2mm]
+\capfig{Rendement solaire vs température --- 300 dpi}
+\end{center}
 \end{cardemerald}
 
-\vfill
+\vspace{6mm}
 {\color{solar}\hrule height 1.2mm}\par\vspace{4mm}
 \textcolor{navy}{\fontsize{25}{30}\selectfont\textbf{UAM / UFR STA / Cellule Physique --- Ndiogou Ndiaye --- 2026--2027}}
 

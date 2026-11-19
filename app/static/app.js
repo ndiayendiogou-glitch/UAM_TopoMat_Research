@@ -218,9 +218,9 @@ function drawJV(payload) {
   ctx.fillStyle = COLORS.blueLight; ctx.strokeStyle = COLORS.blue;
   ctx.beginPath(); ctx.arc(xv(x[best]), yv(y[best]), 5, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
   ctx.fillStyle = COLORS.blue;
-  ctx.textAlign = "left"; ctx.textBaseline = "top";
-  const infoX = xv(0.08 * jv.voc);
-  const infoY = yv(0.48 * jv.jsc_ma_cm2);
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  const infoX = (pad.l + w - pad.r) / 2;
+  const infoY = h - pad.b - 36;
   ctx.fillText(`V_oc = ${fmt(jv.voc)} V · J_sc = ${fmt(jv.jsc_ma_cm2)} mA/cm²`, infoX, infoY);
   ctx.fillText(`FF = ${fmt(jv.ff)} · η = ${fmt(jv.efficiency_percent)} % · T_j = ${fmt(jv.junction_c)} °C`, infoX, infoY + 16);
   document.getElementById("jv-info").textContent = jv.method;
