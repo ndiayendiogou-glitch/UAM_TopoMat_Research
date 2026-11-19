@@ -38,11 +38,11 @@
       max-width: 1500px; margin: 0 auto;
     }
     .brand { display: flex; align-items: center; gap: 16px; }
-    .brand-mark {
-      width: 56px; height: 56px; border-radius: 12px;
-      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.35);
-      display: grid; place-items: center; font-weight: 800; font-size: 20px;
-      letter-spacing: .5px; color: var(--uam-gold);
+    .brand-logo {
+      width: 58px; height: 74px; object-fit: contain;
+      background: #fff; border-radius: 10px; padding: 3px;
+      border: 1px solid rgba(255,255,255,.6);
+      box-shadow: 0 4px 14px rgba(0,0,0,.18);
     }
     .brand h1 { margin: 0; font-size: clamp(17px, 2.2vw, 24px); letter-spacing: .3px; }
     .brand p { margin: 4px 0 0; font-size: 13px; color: #cfe0ee; }
@@ -129,10 +129,10 @@
 <header class="uam-header">
   <div class="header-top">
     <div class="brand">
-      <div class="brand-mark">UAM</div>
+      <img class="brand-logo" src="/static/logo_uam.png" alt="Logo officiel de l'Université Amadou Mahtar Mbow">
       <div>
-        <h1>Université Amadou Mahtar Mbow — UFR STA — Cellule Physique</h1>
-        <p>UAM-TOPOMAT · Chaîne scientifique des Nuits 1 à 11 · Année universitaire 2026 — 2027</p>
+        <h1>UAM-TOPOMAT — Cellule Physique UFR STA</h1>
+        <p>Université Amadou Mahtar Mbow · Chaîne scientifique des Nuits 1 à 12 · Année universitaire 2026 — 2027</p>
       </div>
     </div>
     <div class="charter">

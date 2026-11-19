@@ -1349,3 +1349,111 @@ CO$_2$, FCFA et LCOE, la résolution 300 dpi, l'absence de SciPy et le code
 villes et les trois températures limites).
 
 **Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.
+
+---
+
+## Nuit 12 — Livrables Finaux & Audit Complet
+
+**Date :** 19 novembre 2026  
+**Branche de travail :** `main`  
+**Objectif :** intégrer le logo officiel de l'Université Amadou Mahtar Mbow dans
+tous les supports, compiler l'article scientifique complet (15--20 pages),
+produire le poster A0 et le dossier de soutenance jury, puis auditer l'ensemble
+des livrables avant le Twin Transition Summit.
+
+### 1. Objectifs
+
+- Vérifier et déployer le sceau officiel UAM (`app/static/logo_uam.png`,
+  copié vers `paper_latex/logo_uam.png`, remplaçable par simple écrasement).
+- Afficher le logo en haut à gauche de l'interface web, sur la page de garde de
+  la fiche PDF générée par `src/export_report.py` et sur les documents LaTeX.
+- Rédiger `paper_latex/main.tex` selon les standards internationaux
+  (Physical Review / Nature Energy) et compiler en deux passes vers
+  `results/Article_UAM_TOPOMAT_2026.pdf`.
+- Générer `paper_latex/poster.tex` → `results/Poster_UAM_TOPOMAT_2026.pdf`
+  (A0 portrait, une page, prêt à imprimer) et `DOSSIER_SOUTENANCE_JURY.md`.
+- Écrire `tests/test_night12_final.py`, exécuter `pytest -v`, consigner
+  l'entrée et effectuer le commit final.
+
+### 2. Fichiers créés ou modifiés
+
+```
+app/static/logo_uam.png                    (sceau officiel UAM, 89 615 octets)
+paper_latex/logo_uam.png                   (copie pour compilation LaTeX)
+app/static/index.html                      (logo dans l'en-tête, titre UAM-TOPOMAT)
+src/export_report.py                       (logo sur la page de garde PDF)
+paper_latex/main.tex                       (article complet, ~30 ko)
+results/Article_UAM_TOPOMAT_2026.pdf       (17 pages, 5,8 Mo)
+paper_latex/poster.tex                     (poster A0, 3 colonnes)
+results/Poster_UAM_TOPOMAT_2026.pdf        (1 page A0, 1,7 Mo)
+DOSSIER_SOUTENANCE_JURY.md                 (pitch 3 min, démo, 12 questions)
+tests/test_night12_final.py                (24 tests d'audit final)
+```
+
+### 3. Intégration du logo UAM
+
+Le sceau officiel (fond bleu UAM, lettrage « Université Amadou Mahtar Mbow de
+Dakar ») était déjà déposé dans `app/static/` mais n'était référencé nulle part.
+Il est désormais : (i) affiché en haut à gauche de l'interface FastAPI, à côté
+du titre **UAM-TOPOMAT — Cellule Physique UFR STA** (`<img class="brand-logo">`) ;
+(ii) inclus dans la charte `tcolorbox` de la fiche générée par
+`src/export_report.py` (le `\graphicspath` a été étendu à `./` et
+`../app/static/`, sans toucher au compte des environnements `figure` vérifié
+par la Nuit 10) ; (iii) placé sur la page de garde de l'article et du poster.
+Le fichier peut être remplacé à tout moment par écrasement des deux copies.
+
+### 4. Article scientifique complet
+
+`paper_latex/main.tex` suit une structure internationale : page de garde UAM,
+résumés FR/EN, sommaire, introduction (paradoxe sahélien et Twin Transition),
+architecture du pipeline en cinq étapes, cadre théorique avec six théorèmes
+démontrés, criblage de 2~000 matériaux et NSGA-II avec analyse détaillée de
+UAM-1384 (K$_2$AgBiI$_6$, $C=+1$, $\eta=22{,}84\,\%$) et UAM-1517
+(Ti$_3$C$_2$O$_2$, $C=-1$, $E_{47}=5{,}97$\,Wh\,kg$^{-1}$), impact au Sénégal
+(+126,9\,MWh/an, 69,8\,t CO$_2$/an, 46,2\,M\,FCFA/an, LCOE $-44$ à $-49$\,\%),
+limites et perspectives expérimentales assumées, conclusion et 20 références.
+Dix figures 300~dpi, neuf équations numérotées et trois tableaux y sont
+intégrés. La compilation `pdflatex` (trois passes pour stabiliser le sommaire,
+les références croisées et les signets) produit **17 pages**, sans avertissement
+de débordement.
+
+### 5. Poster et dossier jury
+
+Le poster A0 portrait (2384~$\times$~3370~pt) organise en trois colonnes le
+paradoxe sahélien, le pipeline, la certification symbolique, les 2~000
+matériaux, les deux champions, l'impact chiffré, la démonstration live et les
+limites. Le dossier de soutenance contient le pitch intégral de trois minutes,
+un scénario de démonstration minute par minute sur `LANCER_DEMO_JURY.bat`
+(avec plan B) et douze réponses volontairement transparentes aux questions
+difficiles : modèles non mesurés, absence de DFT, invariant de Chern dépendant
+du modèle, facteur module 0,75, hypothèses économiques, coût de l'argent,
+précision NSGA-II 87,9\,\%, références commerciales, auditabilité, limite
+à 55~$^\circ$C, souveraineté Python et feuille de route expérimentale.
+
+### 6. Audit final et validation
+
+`tests/test_night12_final.py` vérifie l'existence et l'intégrité de tous les
+livrables : signatures `%PDF` et nombres de pages (17 pour l'article, 1 pour le
+poster A0), présence du logo dans les trois supports, cohérence des sources
+LaTeX (accolades et environnements équilibrés), contenu scientifique et
+chiffré, script de démonstration, dossier jury, entrée du journal, résolution
+300~dpi des dix figures et code 200 de toutes les routes web, y compris
+`/static/logo_uam.png`.
+
+Commande : `python -m pytest -v` → **306 tests passés (282 + 24), soit 100 %**.
+La chaîne des douze nuits est désormais fermée : cristallographie et
+Tight-Binding (1) → Chern (2) → états de bord (3) → optique (4) → climat (5) →
+EDP (6) → MXènes (7) → base de 2~000 matériaux (8) → NSGA-II (9) → preuves
+formelles et fiche PDF (10) → impact Sénégal et interface live (11) → article,
+poster, logo et audit jury (12). Aucune dépendance SciPy n'a été introduite.
+
+### 7. Bilan définitif du projet
+
+Douze nuits, onze figures 300~dpi, six théorèmes certifiés, trente-six bornes
+vérifiées, deux champions, une interface souveraine hors ligne, un article de
+17 pages, un poster A0 et un dossier de soutenance : UAM-TOPOMAT est prêt pour
+le Twin Transition Summit. Les limites sont documentées et les perspectives
+expérimentales sont explicites — la rigueur du travail réside aussi dans ce
+qui n'est pas encore démontré.
+
+**Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.

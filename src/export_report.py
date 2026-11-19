@@ -5,7 +5,9 @@ Université Amadou Mahtar Mbow / UFR Sciences et Technologies Avancées /
 Cellule Physique (réalisée par Ndiogou Ndiaye, année universitaire
 2026--2027) : encadrés ``tcolorbox``, tableaux comparatifs du Top 10,
 fiches détaillées des deux champions et intégration des figures 300 dpi.
-La compilation est automatique si ``tectonic`` ou ``pdflatex`` est présent.
+La page de garde porte le logo officiel de l'UAM (``logo_uam.png``,
+présent dans ``paper_latex/`` et ``app/static/``). La compilation est
+automatique si ``tectonic`` ou ``pdflatex`` est présent.
 """
 
 from __future__ import annotations
@@ -168,7 +170,7 @@ def build_tex(payload: dict | None = None) -> str:
         r"\usepackage{xcolor}",
         r"\usepackage{hyperref}",
         r"\usepackage[a4paper,margin=2cm]{geometry}",
-        r"\graphicspath{{../results/figures/}}",
+        r"\graphicspath{{./}{../results/figures/}{../app/static/}}",
         r"\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,"
         r"pdftitle={UAM-TOPOMAT - Fiche technique des champions},pdfauthor={Ndiogou Ndiaye}}",
         r"\newcommand{\UAM}{Université Amadou Mahtar Mbow}",
@@ -186,6 +188,7 @@ def build_tex(payload: dict | None = None) -> str:
         "",
         r"\begin{tcolorbox}[colback=blue!6,colframe=blue!50!black,title=Charte officielle UAM]",
         r"\begin{center}",
+        r"\includegraphics[height=1.8cm]{logo_uam.png}\\[0.4em]",
         r"{\Large\textbf{UNIVERSITÉ AMADOU MAHTAR MBOW}}\\[0.3em]",
         r"\textbf{UFR SCIENCES ET TECHNOLOGIES AVANCÉES}\\[0.2em]",
         r"\textbf{CELLULE PHYSIQUE}\\[0.2em]",

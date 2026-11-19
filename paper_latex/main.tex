@@ -1,11 +1,8 @@
 % ======================================================================
-%  Modèle officiel — Université Amadou Mahtar Mbow (UAM)
-%  UFR Sciences et Technologies Avancées (UFR STA)
-%  Cellule Physique
-%  Réalisé par : Ndiogou Ndiaye
-%  Projet : UAM-TOPOMAT — Moteur Quantique, Topologique et
-%           Thermodynamique pour Matériaux Énergétiques Sahéliens
-%  Nuit 1 — 17 novembre 2026
+%  UAM-TOPOMAT — Article scientifique complet (Nuit 12 Finale)
+%  Université Amadou Mahtar Mbow / UFR Sciences et Technologies Avancées
+%  Cellule Physique / Réalisé par : Ndiogou Ndiaye / 2026 – 2027
+%  Compilation : pdflatex main.tex (deux passes)
 % ======================================================================
 \documentclass[11pt,a4paper,french]{article}
 
@@ -15,85 +12,222 @@
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{graphicx}
 \usepackage{booktabs}
-\usepackage{hyperref}
-\usepackage[a4paper,margin=2.5cm]{geometry}
-\graphicspath{{../results/figures/}}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tcolorbox}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+
+\graphicspath{{../results/figures/}{./}}
 
 \hypersetup{
-  colorlinks=true,
-  linkcolor=blue,
-  citecolor=blue,
-  urlcolor=blue,
-  pdftitle={UAM-TOPOMAT — Nuit 1},
-  pdfauthor={Ndiogou Ndiaye}
+  pdftitle={UAM-TOPOMAT : Plateforme Numérique Souveraine et Automatisée de Conception Quantique, Topologique et Thermodynamique de Matériaux Solaires et de Stockage pour le Climat Sahélien},
+  pdfauthor={Ndiogou Ndiaye},
+  pdfsubject={Article scientifique — Université Amadou Mahtar Mbow, UFR STA, Cellule Physique},
+  pdfkeywords={matériaux sans plomb, topologie, Shockley--Queisser, NSGA-II, Sénégal, Sahel}
 }
 
 \newcommand{\UAM}{Université Amadou Mahtar Mbow}
 \newcommand{\UFR}{UFR Sciences et Technologies Avancées}
 \newcommand{\TOPOMAT}{UAM-TOPOMAT}
+\newcommand{\Eg}{E_{\mathrm{g}}}
+\newcommand{\etal}{\emph{et al.}}
+\newtheorem{theoreme}{Théorème}
+\newtheorem{proposition}{Proposition}
 
-\title{\textbf{\TOPOMAT}\\[0.4em]
-\large Moteur Quantique, Topologique et Thermodynamique\\
-pour Matériaux Énergétiques Sahéliens\\
-\textmd{Nuit 1 — Moteur cristallographique et validateur de Dirac}}
-\author{Ndiogou Ndiaye}
-\date{\UAM \quad•\quad \UFR \quad•\quad Cellule Physique\\17 novembre 2026}
+\renewcommand{\arraystretch}{1.15}
 
 \begin{document}
-\maketitle
 
-\begin{center}
-\fbox{\parbox{0.86\linewidth}{\centering
-\textbf{Modèle officiel de rapport de recherche}\\[0.2em]
-\textbf{\UAM} — \UFR{} — Cellule Physique\\[0.2em]
-Réalisé par : \textbf{Ndiogou Ndiaye}\\[0.2em]
-Projet de recherche de 5 mois : \textbf{\TOPOMAT}
-}}
-\end{center}
+% ======================================================================
+% PAGE DE GARDE OFFICIELLE UAM
+% ======================================================================
+\begin{titlepage}
+\centering
+\includegraphics[height=3.1cm]{logo_uam.png}\par\vspace{0.8cm}
 
+{\Large\textbf{UNIVERSITÉ AMADOU MAHTAR MBOW}}\\[0.35em]
+\textbf{UFR SCIENCES ET TECHNOLOGIES AVANCÉES}\\[0.25em]
+\textbf{CELLULE PHYSIQUE}\\[0.6em]
+
+\rule{0.75\linewidth}{0.8pt}\par\vspace{0.8cm}
+
+{\LARGE\textbf{UAM-TOPOMAT :}}\\[0.3em]
+{\large\textbf{Plateforme Numérique Souveraine et Automatisée de}}\\[0.15em]
+{\large\textbf{Conception Quantique, Topologique et Thermodynamique}}\\[0.15em]
+{\large\textbf{de Matériaux Solaires et de Stockage}}\\[0.15em]
+{\large\textbf{pour le Climat Sahélien}}\par\vspace{1.0cm}
+
+{\large\textbf{Article scientifique complet — Nuit 12 Finale}}\par\vspace{1.2cm}
+
+\begin{tcolorbox}[colback=blue!5,colframe=blue!50!black,width=0.88\linewidth]
+{\large\textbf{Réalisé par : Ndiogou Ndiaye}}\\[0.35em]
+\textbf{Année universitaire : 2026 – 2027}\\[0.35em]
+\textbf{Chaîne de recherche : Nuits 1 à 12 — 300 dpi, zéro dépendance SciPy}\\[0.35em]
+\textbf{Diffusion : Twin Transition Summit, 1er décembre 2026}
+\end{tcolorbox}\par\vspace{0.8cm}
+
+{\small Dakar, République du Sénégal — Novembre 2026}
+\end{titlepage}
+\newpage
+
+% ======================================================================
+% RÉSUMÉ / ABSTRACT / SOMMAIRE
+% ======================================================================
 \begin{abstract}
-\noindent La première nuit du projet \TOPOMAT{} établit le socle numérique du
-programme : un moteur cristallographique (réseaux directs et réciproques 2D/3D,
-points de haute symétrie et chemins dans la zone de Brillouin) et un solveur
-Tight-Binding multi-orbitales fournissant les énergies $E_n(\mathbf{k})$, les
-vecteurs propres, les vitesses de groupe $\mathbf{v}_g(\mathbf{k})$ et la
-densité d'états. La validation analytique et numérique du cône de Dirac du
-graphène au point $K$ est présentée, avec une précision relative inférieure à
-$10^{-6}$.
+\noindent\textbf{Résumé —} Le Sahel fait face à un paradoxe énergétique : l'ensoleillement y est parmi les plus élevés du globe, tandis que l'accès à une électricité fiable, abordable et souveraine reste limité. Cet article présente \TOPOMAT{}, une plateforme numérique souveraine, entièrement écrite en Python et exécutable hors ligne, qui automatise la conception de matériaux énergétiques sans plomb adaptés au climat sahélien. La chaîne intègre cinq étapes : (i) cristallographie et solveur Tight-Binding, (ii) courbure de Berry et invariant de Chern par la méthode de Fukui--Hatsugai--Suzuki avec états de bord, (iii) optique AM1.5G et limite de Shockley--Queisser couplée à un bilan radiatif--convectif, (iv) transport de porteurs par Scharfetter--Gummel et stockage MXène à capacité quantique, (v) criblage de 2\,000 candidats sans plomb et optimisation multi-objectifs NSGA-II, prolongés par une évaluation d'impact énergétique et économique. Six théorèmes fondateurs sont certifiés symboliquement (résidus nuls) et trente-six bornes physiques sont vérifiées. Le criblage identifie deux champions : UAM-1384 (K$_2$AgBiI$_6$, $C=+1$, $\eta_{\mathrm{Matam}}=22{,}84\,\%$) et UAM-1517 (Ti$_3$C$_2$O$_2$, $C=-1$, $E_{47}=5{,}97$\,Wh\,kg$^{-1}$). Déployés dans une mini-centrale de 100\,kWc à Dakar, Saint-Louis et Matam, ils délivrent +126,9\,MWh/an, évitent 69,8\,t de CO$_2$/an, économisent 46,2\,M\,FCFA/an et réduisent le LCOE de 44 à 49\,\% par rapport au couple silicium--plomb/Li-ion. Les limites du modèle (absence de DFT et de validation expérimentale) sont discutées en toute transparence.
+
+\vspace{0.6cm}
+\noindent\textbf{Abstract —} The Sahel faces an energy paradox: exceptional solar irradiation coexists with limited access to reliable, affordable and sovereign electricity. We present \TOPOMAT{}, a sovereign, fully offline Python platform that automates the design of lead-free energy materials for Sahelian climates. The pipeline integrates five stages: (i) crystallography and tight-binding electronic structure, (ii) Berry curvature and Chern invariants via the Fukui--Hatsugai--Suzuki method with edge-state analysis, (iii) AM1.5G optics and Shockley--Queisser limit coupled to a radiative--convective balance, (iv) Scharfetter--Gummel carrier transport and MXene quantum-capacitance storage, and (v) high-throughput screening of 2,000 lead-free candidates with multi-objective NSGA-II optimisation, extended to energy and economic impact assessment. Six founding theorems are symbolically certified (zero residuals) and thirty-six physical bounds are verified. Screening identifies two champions: UAM-1384 (K$_2$AgBiI$_6$, $C=+1$, $\eta_{\mathrm{Matam}}=22.84\,\%$) and UAM-1517 (Ti$_3$C$_2$O$_2$, $C=-1$, $E_{47}=5.97$\,Wh\,kg$^{-1}$). Deployed in a 100\,kWc mini-grid in Dakar, Saint-Louis and Matam, they yield +126.9\,MWh/yr, avoid 69.8\,t CO$_2$/yr, save 46.2\,M\,FCFA/yr and reduce LCOE by 44--49\,\% relative to a silicon--lead/Li-ion reference.
+
+\vspace{0.6cm}
+\noindent\textbf{Mots-clés :} matériaux sans plomb · pérovskites doubles · MXènes · courbure de Berry · invariant de Chern · Shockley--Queisser · NSGA-II · climat sahélien · Sénégal · souveraineté numérique.
+
+\noindent\textbf{Keywords:} lead-free materials · double perovskites · MXenes · Berry curvature · Chern invariant · Shockley--Queisser · NSGA-II · Sahelian climate · Senegal · digital sovereignty.
 \end{abstract}
 
+\tableofcontents
+\newpage
+
+% ======================================================================
 \section{Introduction}
-L'ambition de \TOPOMAT{} est de construire un moteur de calcul quantique,
-topologique et thermodynamique dédié aux matériaux énergétiques sahéliens
-(pérovskites halogénées, MXènes, hétérostructures 2D). La Nuit~1 pose les
-briques mathématiques et logicielles vérifiables qui serviront de référence
-aux nuits suivantes.
+\label{sec:intro}
+% ======================================================================
 
-\section{Cadre théorique}
+\subsection{Le paradoxe énergétique sahélien}
 
-\subsection{Réseau réciproque et zone de Brillouin}
-Étant donnés les vecteurs primitifs $\mathbf{a}_i$, les vecteurs du réseau
-réciproque sont
+L'Afrique de l'Ouest dispose d'une ressource solaire exceptionnelle : l'ensoleillement global horizontal y atteint typiquement 1\,500 à 2\,200\,kWh\,m$^{-2}$\,an$^{-1}$, avec un facteur de charge potentielles largement supérieur aux moyennes européennes \cite{aie2022,pse2014}. Pourtant, dans les régions sahéliennes, l'accès à une électricité continue, abordable et souveraine demeure un frein majeur au développement : les réseaux sont étendus à grand frais, le coût du kWh est élevé et les groupes électrogènes au diesel dominent encore les usages critiques \cite{banque2022}. Le Sénégal illustre ce paradoxe. Le long d'un gradient climatique nord--sud, Dakar (31\,$^\circ$C), Saint-Louis (37\,$^\circ$C) et Matam (47\,$^\circ$C) voient leurs performances photovoltaïques se dégrader précisément là où le besoin en climatisation et en stockage est le plus fort. La chaleur réduit le rendement des modules, accélère le vieillissement des électrolytes et augmente la résistance série des dispositifs de stockage.
+
+Répondre à ce paradoxe exige d'agir simultanément sur deux dimensions souvent traitées séparément : la \emph{transition énergétique} (décarboner et décentraliser la production) et la \emph{transition numérique} (maîtriser les outils de conception et les chaînes de valeur). C'est la ``Twin Transition'' \cite{ce2020}. Dans un contexte où les logiciels de calcul scientifique, les bases de données de matériaux et les services de calcul en nuage sont concentrés hors du continent, la souveraineté technologique n'est pas un slogan : elle conditionne la capacité à améliorer, reproduire et adapter localement les solutions.
+
+\subsection{La contribution de \TOPOMAT{}}
+
+Cet article documente une réponse intégrée à ce double défi. \TOPOMAT{} est une plateforme de conception assistée par ordinateur de matériaux énergétiques, développée en Python pur (NumPy, SymPy, Matplotlib, FastAPI) sans aucune dépendance à SciPy et sans ressource réseau externe. Elle couvre la chaîne complète, depuis la géométrie cristalline jusqu'au bilan financier d'une mini-centrale, en passant par les invariants topologiques, l'optique quantique, le transport de porteurs, le stockage électrochimique et l'optimisation multi-objectifs.
+
+Trois choix structurants méritent d'être soulignés.
+
+\begin{enumerate}
+  \item \textbf{Un formalisme certifiable.} Chaque équation fondatrice est dérivée puis vérifiée symboliquement par SymPy ; les résidus sont identiquement nuls et les bornes physiques des matériaux champions sont contrôlées une à une (36 vérifications).
+  \item \textbf{Une chaîne fermée et reproductible.} Les onze premières nuits produisent des modules, onze figures 300\,dpi, deux certificats LaTeX et une interface web locale. La Nuit 12 les consolide en un article et un poster de soutenance.
+  \item \textbf{Une orientation impact.} Le criblage n'est pas une fin en soi : les deux champions alimentent directement un modèle de centrale de 100\,kWc évalué sur trois sites sénégalais, avec conversion en MWh, tonnes de CO$_2$ évitées, FCFA économisés et LCOE actualisé.
+\end{enumerate}
+
+\subsection{Organisation de l'article}
+
+La section~\ref{sec:archi} décrit l'architecture du pipeline et ses cinq étapes. La section~\ref{sec:theorie} établit le cadre théorique et les preuves formelles. La section~\ref{sec:criblage} présente le criblage de 2\,000 matériaux, l'optimisation NSGA-II et les deux champions. La section~\ref{sec:impact} quantifie l'impact au Sénégal. La section~\ref{sec:limites} discute les limites et les perspectives expérimentales avant la conclusion (section~\ref{sec:conclusion}).
+
+% ======================================================================
+\section{Architecture du pipeline automatisé}
+\label{sec:archi}
+% ======================================================================
+
+La plateforme est organisée en cinq étapes séquentielles, chacune correspondant à un module Python autonome, à une figure de publication 300\,dpi et à une suite de tests. Le tableau~\ref{tab:pipeline} synthétise cette architecture.
+
+\begin{table}[htbp]
+\centering\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c l l l@{}}
+\toprule
+Étape & Module principal & Sortie scientifique & Nuits \\
+\midrule
+1 & \texttt{src/quantum/} & Réseaux, bandes $E_n(\mathbf{k})$, DOS, cône de Dirac & 1 \\
+2 & \texttt{src/topology/} & Courbure $\Omega$, invariant $C$, états de bord & 2--3 \\
+3 & \texttt{src/optics/}, \texttt{src/thermo/sahel\_climate.py} & $\eta_{\mathrm{SQ}}$, $J(V)$, bilan thermique & 4--5 \\
+4 & \texttt{src/pde/}, \texttt{src/thermo/supercapacitor\_mxene.py} & Transport SG, Ragone MXène & 6--7 \\
+5 & \texttt{src/quantum/materials\_generator.py}, \texttt{src/thermo/inverse\_discovery.py} & 2\,000 candidats, Pareto NSGA-II, impact & 8--11 \\
+\bottomrule
+\end{tabular}}
+\caption{Architecture en cinq étapes de la chaîne \TOPOMAT. Chaque étape est validée par des tests déterministes et produit une figure 300\,dpi.}
+\label{tab:pipeline}
+\end{table}
+
+\subsection{Étape 1 — Cristallographie et structure électronique}
+
+Le module \texttt{lattice.py} construit les réseaux directs et réciproques 2D/3D (carré, hexagonal, pérovskite ABX$_3$ Pm$\bar{3}$m, MXène M$_2$X P$\bar{3}$m1) ainsi que les chemins de haute symétrie de la zone de Brillouin. Le solveur \texttt{band\_structure.py} diagonalise le Hamiltonien Tight-Binding hermitien $H(\mathbf{k})$ et calcule les vitesses de groupe par le théorème d'Hellmann--Feynman, la densité d'états par élargissement gaussien et les dipôles $\mathbf{r}_{cv}$ nécessaires à l'optique. La validation de référence est le cône de Dirac du graphène : $v_F\simeq 8{,}74\times10^5$\,m\,s$^{-1}$, en accord avec la littérature à mieux que $10^{-6}$ en précision relative \cite{novoselov2004}. La figure~\ref{fig:n1} montre les bandes et la DOS.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{night1_bands_dos.png}
+\caption{Structure de bandes Tight-Binding et densité d'états du graphène. L'encadré met en évidence le croisement linéaire au point $K$ (cône de Dirac). Figure 300\,dpi, Nuit 1.}
+\label{fig:n1}
+\end{figure}
+
+\subsection{Étape 2 — Topologie : courbure de Berry, Chern et états de bord}
+
+La méthode de Fukui--Hatsugai--Suzuki \cite{fhs2005} calcule le flux de Berry sur un maillage de la zone de Brillouin à partir des vecteurs propres, sans choix de jauge global. L'invariant de Chern $C\in\mathbb{Z}$ en résulte ; la correspondance bulk--boundary est vérifiée sur des rubans de Haldane et QWZ, où le nombre de crossings à énergie nulle vaut $2|C|$ \cite{haldane1988,thouless1982}. Les figures~\ref{fig:n2} et~\ref{fig:n3} illustrent la phase de Chern et les états de bord.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{night2_haldane_chern_phase.png}
+\caption{(a) Courbure de Berry dans la première zone de Brillouin du modèle de Haldane ; (b) diagramme de phase $(\varphi, M/t_2)$ avec les régions $C=+1$, $C=-1$ et $C=0$. Les étoiles marquent les points testés. Figure 300\,dpi, Nuit 2.}
+\label{fig:n2}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{night3_edge_states_ribbon.png}
+\caption{Spectres $E(k_x)$ de rubans topologiques et triviaux. Les états de bord chiraux sont mis en évidence ; leur localisation exponentielle confirme la correspondance bulk--boundary $n_{\mathrm{channels}}=2|C|$. Figure 300\,dpi, Nuit 3.}
+\label{fig:n3}
+\end{figure}
+
+\subsection{Étape 3 — Optique solaire et bilan thermique sahélien}
+
+Le spectre AM1.5G (ASTM G173) est interpolé puis normalisé à 1\,000\,W\,m$^{-2}$ \cite{astm2012}. Le flux photonique au-dessus de la bande interdite donne $J_{\mathrm{sc}}$ ; le courant de saturation $J_0$ découle de l'émission radiative à l'équilibre détaillé, ce qui permet de résoudre la limite de Shockley--Queisser \cite{shockley1961}. La figure~\ref{fig:n4} présente $\eta_{\mathrm{SQ}}(E_g,T)$, la dégradation thermique et l'absorption calculée. Le bilan radiatif--convectif de la Nuit 5 détermine la température de jonction $T_j$ en régime permanent (figure~\ref{fig:n5}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{night4_solar_efficiency_vs_temp.png}
+\caption{(a) Limite de Shockley--Queisser $\eta(E_g,T)$ ; (b) dégradation thermique à $E_g=1{,}34$\,eV (pente $\approx-0{,}043$ point/K) ; (c) spectre AM1.5G et longueur d'onde de coupure ; (d) absorption $\alpha(\lambda)$ issue du Tight-Binding. Figure 300\,dpi, Nuit 4.}
+\label{fig:n4}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{night5_sahel_thermal_balance.png}
+\caption{(a) Température de jonction et rendement $\eta(T_j)$ en fonction de la température ambiante pour Dakar, Saint-Louis et Matam ; (b) production annuelle comparative. Figure 300\,dpi, Nuit 5.}
+\label{fig:n5}
+\end{figure}
+
+\subsection{Étape 4 — Transport de porteurs et stockage MXène}
+
+Le module \texttt{carrier\_transport.py} résout le système Poisson--dérive--diffusion avec la discretisation de Scharfetter--Gummel \cite{scharfetter1969,sze2007}, garantissant la conservation exacte du courant même lorsque le potentiel varie fortement sur un pas de maille. La figure~\ref{fig:n6} montre les courbes $J(V)$, la distribution de potentiel et les profils de porteurs. En parallèle, \texttt{supercapacitor\_mxene.py} calcule la capacité quantique $C_Q$ des MXènes, la capacité série $C_{\mathrm{tot}}$, la résistance ESR et les courbes de Ragone à 25\,$^\circ$C et 47\,$^\circ$C \cite{naguib2011,gogotsi2011} (figure~\ref{fig:n7}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{night6_jv_curves_sahel.png}
+\caption{(a) Caractéristiques $J(V)$ pour trois climats ; (b) courbes de puissance et points de puissance maximale ; (c) potentiel électrostatique $\varphi(x)$ à $V=0$ ; (d) profils $n(x)$ et $p(x)$ en échelle logarithmique. Figure 300\,dpi, Nuit 6.}
+\label{fig:n6}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{night7_ragone_mxene_sahel.png}
+\caption{(a) Diagramme de Ragone du MXène à 25\,$^\circ$C et à Matam (47\,$^\circ$C) comparé aux batteries Li-ion et aux supercondensateurs commerciaux ; (b) ESR en fonction de la température ; (c) cycles galvanostatiques ; (d) rétention de capacité. Figure 300\,dpi, Nuit 7.}
+\label{fig:n7}
+\end{figure}
+
+\subsection{Étape 5 — Découverte inverse et impact}
+
+Le générateur \texttt{materials\_generator.py} produit 2\,000 candidats sans plomb ni cobalt, chimiquement neutres, répartis en pérovskites simples (900), doubles halogénées (550) et MXènes (550). L'optimiseur NSGA-II \cite{deb2002} recherche le front de Pareto à quatre objectifs (performance, stabilité thermique, abondance, coût). Enfin, \texttt{senegal\_grid\_impact.py} convertit les propriétés des champions en indicateurs énergétiques et financiers pour trois villes. L'interface FastAPI locale \texttt{app/server.py} expose l'ensemble de la chaîne au jury, sans connexion externe.
+
+% ======================================================================
+\section{Cadre théorique et preuves formelles}
+\label{sec:theorie}
+% ======================================================================
+
+Cette section énonce les six théorèmes qui constituent le socle mathématique de la plateforme. Tous ont été dérivés et vérifiés symboliquement avec SymPy ; les équations exportées sont disponibles dans \texttt{paper\_latex/equations\_verified.tex}.
+
+\subsection{Tight-Binding et théorème d'Hellmann--Feynman}
+
+\begin{theoreme}[Liaisons fortes et vitesse de groupe]
+Soit le Hamiltonien hermitien dépendant de $\mathbf{k}$
 \begin{equation}
-  \mathbf{b}_i = 2\pi\,\frac{\mathbf{a}_j\times\mathbf{a}_k}
-  {\mathbf{a}_1\cdot(\mathbf{a}_2\times\mathbf{a}_3)},
-  \qquad (i,j,k)\ \text{cyclique},
-\end{equation}
-de sorte que $\mathbf{b}_i\cdot\mathbf{a}_j = 2\pi\delta_{ij}$. Les points de
-haute symétrie sont exprimés en coordonnées fractionnaires de
-$(\mathbf{b}_1,\mathbf{b}_2,\mathbf{b}_3)$ : $\Gamma=(0,0,0)$,
-$X=(1/2,0,0)$, $M=(1/2,1/2,0)$, $K=(1/3,2/3,0)$.
-
-\subsection{Hamiltonien Tight-Binding multi-orbitales}
-Le modèle général utilisé dans \texttt{src/quantum/band_structure.py} est
-\begin{equation}
-  H_{ij}(\mathbf{k}) = \varepsilon_i\delta_{ij}
-  + \sum_{\mathbf{R}} t_{ij}(\mathbf{R})\,e^{i\mathbf{k}\cdot\mathbf{R}},
+  H_{ij}(\mathbf{k}) = \sum_{\mathbf{R}} t_{ij}(\mathbf{R})\,e^{i\mathbf{k}\cdot\mathbf{R}},
   \qquad H_{ji}(\mathbf{k}) = H_{ij}^{*}(\mathbf{k}).
+  \label{eq:tb}
 \end{equation}
-Les énergies $E_n(\mathbf{k})$ et les vecteurs propres $|u_{n\mathbf{k}}\rangle$
-sont obtenus par diagonalisation hermitienne. Par le théorème
-d'Hellmann--Feynman,
+Alors les énergies $E_n(\mathbf{k})$ et vecteurs propres $|u_{n\mathbf{k}}\rangle$ vérifient
 \begin{equation}
   \mathbf{v}_g^{(n)}(\mathbf{k}) = \frac{1}{\hbar}
   \left\langle u_{n\mathbf{k}}\middle|
@@ -101,60 +235,271 @@ d'Hellmann--Feynman,
   \middle|u_{n\mathbf{k}}\right\rangle,
   \qquad
   \frac{\partial H_{ij}}{\partial k_\alpha}
-  = \sum_{\mathbf{R}} i R_\alpha\, t_{ij}(\mathbf{R})
-  e^{i\mathbf{k}\cdot\mathbf{R}}.
+  = \sum_{\mathbf{R}} i R_\alpha\, t_{ij}(\mathbf{R}) e^{i\mathbf{k}\cdot\mathbf{R}}.
+  \label{eq:hf}
 \end{equation}
-La densité d'états est évaluée par élargissement gaussien,
+\end{theoreme}
+\begin{proof}
+La dérivée de l'équation aux valeurs propres $H|u_n\rangle=E_n|u_n\rangle$, projetée sur $\langle u_n|$ et utilisant la normalisation $\langle u_n|u_n\rangle=1$, donne $\langle u_n|\partial_{\mathbf{k}}H|u_n\rangle=\partial_{\mathbf{k}}E_n$ ; or $\mathbf{v}_g=\nabla_{\mathbf{k}}E_n/\hbar$. Le résidu symbolique est identiquement nul.
+\end{proof}
+
+Pour le graphène (sauts $-t$, $t=2{,}7$\,eV, $d=1{,}42$\,Å), $f(\mathbf{k})=\sum_{j=1}^{3}e^{i\mathbf{k}\cdot\boldsymbol{\delta}_j}$ et $E_\pm=\pm t|f|$. Autour de $K$, $|f(K+\mathbf{q})|^2=\frac{9}{4}d^2|\mathbf{q}|^2+O(q^3)$, d'où
 \begin{equation}
-  g(E) = \frac{1}{N_k}\sum_{\mathbf{k},n}
-  \frac{1}{\sigma\sqrt{2\pi}}
-  \exp\!\left[-\frac{(E-E_n(\mathbf{k}))^2}{2\sigma^2}\right],
-  \qquad \int g(E)\,dE = N_{\mathrm{orb}}.
+  E_\pm(K+\mathbf{q}) = \pm\hbar v_F|\mathbf{q}| + O(q^2),
+  \qquad v_F=\frac{3td}{2\hbar}\simeq 8{,}74\times10^{5}\,\mathrm{m\,s^{-1}}.
+  \label{eq:dirac}
+\end{equation}
+La densité d'états gaussienne $g(E)=\frac{1}{N_k}\sum_{\mathbf{k},n}\frac{1}{\sigma\sqrt{2\pi}}\exp[-(E-E_n(\mathbf{k}))^2/2\sigma^2]$ satisfait $\int g\,dE=N_{\mathrm{orb}}$.
+
+\subsection{Courbure de Berry et invariant de Chern}
+
+\begin{theoreme}[Méthode FHS et quantification]
+Sur le maillage $\mathbf{k}_{ij}=\frac{i+1/2}{N_1}\mathbf{b}_1+\frac{j+1/2}{N_2}\mathbf{b}_2$, avec les liaisons
+\begin{equation}
+  U_\mu(\mathbf{k}) = \frac{\langle\psi_n(\mathbf{k})|\psi_n(\mathbf{k}+\delta\mathbf{k}_\mu)\rangle}
+  {\left|\langle\psi_n(\mathbf{k})|\psi_n(\mathbf{k}+\delta\mathbf{k}_\mu)\rangle\right|},
+  \label{eq:link}
+\end{equation}
+le flux de Berry $F_{12}(\mathbf{k})=\mathrm{Arg}\,[U_1(\mathbf{k})U_2(\mathbf{k}+\hat{1})U_1^{*}(\mathbf{k}+\hat{2})U_2^{*}(\mathbf{k})]$ donne
+\begin{equation}
+  \Omega_n(\mathbf{k}) = \frac{F_{12}(\mathbf{k})}{dA},
+  \qquad
+  C_n = \frac{1}{2\pi}\sum_{\mathbf{k}}F_{12}(\mathbf{k})
+  = \frac{1}{2\pi}\int_{\mathrm{BZ}}\Omega_n\,d^2k \in \mathbb{Z}.
+  \label{eq:chern}
+\end{equation}
+\end{theoreme}
+La quantification est vérifiée à $10^{-6}$ près. Pour un cône de Dirac massif, $\Omega_-^{\mathrm{Dirac}}=-\frac{mv^2}{2(k^2v^2+m^2)^{3/2}}$ et $(2\pi)^{-1}\int\Omega\,d^2k=-\tfrac12$. Le modèle de Haldane satisfait
+\begin{equation}
+  C_{\mathrm{Haldane}}=-\tfrac12\,\mathrm{sgn}(M-M_c)+\tfrac12\,\mathrm{sgn}(M+M_c),
+  \qquad M_c=3\sqrt{3}\,t_2\sin\varphi,
+  \label{eq:haldane}
+\end{equation}
+avec $C=+1$ si $\sin\varphi>0$ et $|M|<|M_c|$.
+
+\subsection{États de bord et correspondance bulk--boundary}
+
+Pour un ruban, le saut dépend de $k_x$ via $t_{ij}(\Delta m,\Delta n;k_x)=t_{ij}e^{ik_xR_x}$ avec $R_x=\Delta m\,a_{1x}+\Delta n\,a_{2x}+\tau_{jx}-\tau_{ix}$. Un état est dit \emph{de bord} s'il appartient au cœur central (80\,\%) du gap projeté et si son poids sur trois cellules de bord est $\geq 0{,}5$. Le nombre de crossings à énergie nulle vérifie
+\begin{equation}
+  n_{\mathrm{channels}} = 2\,|C|.
+  \label{eq:bulkedge}
+\end{equation}
+Cette relation est confirmée numériquement sur les rubans de Haldane ($t_1=1$, $t_2=0{,}3$, $\varphi=\pi/2$, $M=0{,}6$) et QWZ ($H=\sin k_x\sigma_x+\sin k_y\sigma_y+(u+\cos k_x+\cos k_y)\sigma_z$).
+
+\subsection{Limite de Shockley--Queisser et bilan radiatif--convectif}
+
+\begin{theoreme}[Limite thermodynamique de conversion]
+Le flux photonique au-dessus de la bande interdite et le courant radiatif d'équilibre détaillé sont
+\begin{equation}
+  \Phi_{\mathrm{sun}}(E_g)=\int_{\lambda\leq hc/E_g}\frac{I(\lambda)}{E}\,d\lambda,
+  \qquad
+  J_0=q\,\frac{2\pi}{h^3c^2}\int_{E_g}^{\infty}\frac{E^2}{e^{E/k_BT}-1}\,dE.
+  \label{eq:flux}
+\end{equation}
+Ces deux quantités conduisent à la caractéristique de Shockley--Queisser :
+\begin{equation}
+  J(V)=J_{\mathrm{sc}}-J_0\!\left(e^{qV/k_BT}-1\right),\qquad
+  V_{\mathrm{oc}}=\frac{k_BT}{q}\ln\!\left(1+\frac{J_{\mathrm{sc}}}{J_0}\right),
+  \label{eq:jv}
+\end{equation}
+et le point de puissance maximal résout $(1+v)e^v=1+J_{\mathrm{sc}}/J_0$ avec $v=qV_{\mathrm{mp}}/k_BT$, d'où $\eta_{\mathrm{SQ}}=V_{\mathrm{mp}}J_{\mathrm{mp}}/P_{\mathrm{in}}$. Le maximum vaut $33{,}94\,\%$ pour $E_g=1{,}339$\,eV (AM1.5G, 1 soleil).
+\end{theoreme}
+
+La température de jonction en régime permanent est la racine unique de
+\begin{equation}
+  f(T_j)=\alpha_{\mathrm{sol}}G-\eta(T_j)G-h_{\mathrm{conv}}(T_j-T_{\mathrm{amb}})
+  -\varepsilon\sigma_{\mathrm{SB}}(T_j^4-T_{\mathrm{sky}}^4)-U_{\mathrm{ext}}(T_j-T_{\mathrm{in}})=0,
+  \label{eq:bilan}
+\end{equation}
+avec $\eta(T_j)=\eta_{\mathrm{ref}}\exp[\beta_T(T_j-T_{\mathrm{ref}})]$, $h_{\mathrm{conv}}=5{,}7+3{,}8v$ et $T_{\mathrm{sky}}=T_{\mathrm{amb}}-8$\,K. La dérivée $f'(T_j)=-\beta_T\eta G-h_{\mathrm{conv}}-4\varepsilon\sigma_{\mathrm{SB}}T_j^3-U_{\mathrm{ext}}<0$ garantit l'unicité. La constante de Stefan--Boltzmann est certifiée :
+\begin{equation}
+  \sigma_{\mathrm{SB}}=\frac{2\pi^5k_B^4}{15h^3c^2}=5{,}670374419\times10^{-8}\,\mathrm{W\,m^{-2}\,K^{-4}}.
+  \label{eq:sigma}
 \end{equation}
 
-\subsection{Cône de Dirac du graphène}
-Avec trois sauts premiers voisins $-\,t$ de vecteurs
-$\boldsymbol{\delta}_1=d(1,0)$,
-$\boldsymbol{\delta}_2=d(-1/2,-\sqrt3/2)$,
-$\boldsymbol{\delta}_3=d(-1/2,\sqrt3/2)$, on a
-\begin{equation}
-  H(\mathbf{k}) = -t\begin{pmatrix}
-  0 & f(\mathbf{k})\\
-  f^{*}(\mathbf{k}) & 0
-  \end{pmatrix},
-  \qquad f(\mathbf{k})=\sum_{j=1}^{3}e^{i\mathbf{k}\cdot\boldsymbol{\delta}_j},
-  \qquad E_\pm(\mathbf{k})=\pm t\,|f(\mathbf{k})|.
-\end{equation}
-Au point $K=(2\pi/3d,\,2\pi/3\sqrt3\,d)$, $f(K)=0$. Pour
-$\mathbf{k}=K+\mathbf{q}$ avec $|\mathbf{q}|\ll 1/d$, l'expansion symbolique
-donne $|f(K+\mathbf{q})|^2 = \frac{9}{4}d^2|\mathbf{q}|^2 + O(q^3)$, d'où
-\begin{equation}
-  E_\pm(K+\mathbf{q}) = \pm\frac{3}{2}t\,d\,|\mathbf{q}| + O(q^2)
-  = \pm\hbar v_F |\mathbf{q}|,
-  \qquad v_F=\frac{3td}{2\hbar}.
-\end{equation}
-Avec $t=2.7$~eV et $d=1.42$~Å : $\hbar v_F = 5.751$~eV\,Å et
-$v_F\simeq 8.74\times10^5$~m\,s$^{-1}$.
+\subsection{Transport de porteurs : Scharfetter--Gummel}
 
-\section{Résultats préliminaires}
-La figure~\ref{fig:night1} présente les bandes du graphène le long de
-$\Gamma\to M\to K\to\Gamma$ ainsi que la densité d'états obtenue sur une grille
-de $150\times150$ points de la zone de Brillouin. L'encadré met en évidence le
-croisement linéaire au point $K$.
+\begin{theoreme}[Conservation exacte du courant]
+Avec $B(z)=z/(e^z-1)$ et $\Delta u_i=(\varphi_{i+1}-\varphi_i)/V_T$, le flux de Scharfetter--Gummel
+\begin{equation}
+  J_{n,i+1/2}=\frac{q\mu_n V_T}{h}\left[B(\Delta u_i)n_{i+1}-B(-\Delta u_i)n_i\right]
+  \label{eq:sg}
+\end{equation}
+et son analogue pour les trous s'écrivent, en variables de Slotboom $w=ne^{-\varphi/V_T}$, $z=pe^{\varphi/V_T}$, sous la forme $J_n=A_i(w_{i+1}-w_i)$, $J_p=C_i(z_i-z_{i+1})$ avec $A_i,C_i>0$. Le courant est donc conservé exactement. Les identités certifiées sont $B(-z)=B(z)+z$ et $B(z)=1-z/2+z^2/12+O(z^3)$.
+\end{theoreme}
+Les équations de Poisson et de continuité, $\partial_x(\varepsilon\partial_x\varphi)=-q(p-n+N_D-N_A)$ et $(1/q)\,dJ_n/dx=R-G$, sont résolues par itérations de Gummel avec solveur tridiagonal de Thomas et balayage adaptatif de tension ($\Delta V\leq0{,}04$\,V).
+
+\subsection{Capacité quantique des MXènes et stockage}
+
+\begin{theoreme}[Capacité série et équilibre de charge]
+La capacité quantique $C_Q(V)=e^2\,\mathrm{DOS}(E_F+eV)/A_{\mathrm{cell}}$ et la capacité de Helmholtz $C_H(T)$ se combinent en série :
+\begin{equation}
+  \frac{1}{C_{\mathrm{tot}}(V)}=\frac{1}{C_Q(V)}+\frac{1}{C_H(T)},\qquad
+  \frac{\partial C_{\mathrm{tot}}}{\partial C_Q}=\frac{C_H^2}{(C_Q+C_H)^2}>0.
+  \label{eq:cq}
+\end{equation}
+L'équilibre $q=f_+Q_+(V_+)=f_-Q_-(V_-)$ fixe $U_{\mathrm{oc}}(q)=V_+(q/f_+)+V_-(q/f_-)$. Les identités $\tfrac12 C_{\mathrm{tot}}U^2=q^2/(2C_{\mathrm{tot}})$ et $C_{\mathrm{tot}}<\min(C_Q,C_H)$ sont vérifiées symboliquement.
+\end{theoreme}
+Pour $A_{\mathrm{cell}}=\sqrt3a^2/2=7{,}7942\times10^{-20}$\,m$^2$ ($a=3$\,Å), on obtient $C_Q\in[0{,}23\,;\,2{,}35]$\,F\,m$^{-2}$ et $C_{\mathrm{tot}}\approx120$\,F\,g$^{-1}$ par électrode. Au-delà de 40\,$^\circ$C, un facteur de perte de pores $a_p(T)=e^{-\lambda(T-313{,}15)_+}$ avec $\lambda=5\times10^{-3}$\,K$^{-1}$ dégrade la rétention à 98,11\,\% à 47\,$^\circ$C.
+
+\begin{tcolorbox}[colback=green!5,colframe=green!50!black,title=Synthèse de la certification symbolique]
+Six théorèmes (Tight-Binding/Hellmann--Feynman, Berry/Chern, Shockley--Queisser, Stefan--Boltzmann, Scharfetter--Gummel/Einstein, capacité série) présentent des résidus symboliques nuls ($<10^{-12}$). Trente-six bornes numériques (18 par champion) sont satisfaites. Aucune dépendance à SciPy n'a été introduite.
+\end{tcolorbox}
+
+% ======================================================================
+\section{Criblage de 2 000 matériaux et optimisation NSGA-II}
+\label{sec:criblage}
+% ======================================================================
+
+\subsection{Construction de la base de données}
+
+La base \texttt{data/african\_materials\_db.json} contient $N=2\,000$ composés générés de façon déterministe (graine 2026), tous exempts de plomb et de cobalt, électriquement neutres ($|Q_{\mathrm{net}}|<10^{-9}$). Les familles cibles sont ABX$_3$ (900), A$_2$BB'X$_6$ (550) et MXène (550). Les corrélations physiques utilisent le rayon de Shannon, l'électronégativité, le rapport de tolérance de Goldschmidt $t=(r_A+r_X)/[\sqrt2(r_B+r_X)]$ et un couplage spin--orbite $\lambda_{\mathrm{SOC}}=\mathrm{clip}[0{,}45(Z_{\max}/83)^4]$. Les intervalles obtenus sont $E_g\in[1{,}37\,;\,2{,}69]$\,eV, $\mu_n\in[102\,;\,1\,281]$\,cm$^2$\,V$^{-1}$\,s$^{-1}$ et $\beta_T\in[-2{,}23\,;-0{,}84]\times10^{-3}$\,K$^{-1}$. La figure~\ref{fig:n8} résume la distribution statistique.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{night1_bands_dos.png}
-\caption{Structure de bandes Tight-Binding et densité d'états du graphène —
-validation Nuit 1 du projet \TOPOMAT. Figure produite à 300~dpi par
-\texttt{tests/test\_night1.py}.}
-\label{fig:night1}
+\includegraphics[width=0.88\linewidth]{night8_materials_landscape.png}
+\caption{(a) Histogrammes des gaps par famille ; (b) corrélation $E_g$--$\beta_T$ ; (c) abondance ouest-africaine versus coût ; (d) répartition des 2\,000 candidats. Figure 300\,dpi, Nuit 8.}
+\label{fig:n8}
 \end{figure}
 
-\section{Conclusion et perspectives}
-Le solveur quantique et le moteur cristallographique sont opérationnels et
-validés. Les nuits suivantes étendront le formalisme aux invariants
-topologiques (Berry, Chern), à la réponse optique et aux fonctions
-thermodynamiques des pérovskites et MXènes sahéliens.
+\subsection{Optimisation multi-objectifs}
+
+NSGA-II est configuré avec une population de 300 individus, 250 générations, une probabilité de croisement de 0,9, de mutation de 0,15 et un tournoi binaire sur le rang puis la distance de crowding. Les quatre objectifs sont la performance (à maximiser), la stabilité thermique, l'abondance des éléments et le coût (à minimiser). Le diagnostic est le suivant : hypervolume proxy $=2\,151{,}99$, front NSGA-II de 198 solutions, front de Pareto exact de 346 solutions, précision $87{,}9\,\%$, taux de récupération $50{,}3\,\%$. La sélection finale retient les cinq meilleurs photovoltaïques et les cinq meilleurs MXènes du front.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{night9_pareto_discovery.png}
+\caption{(a) Espace des 2\,000 candidats avec le front de Pareto (346 points) et le Top 10 (étoiles dorées) ; (b) radar comparant UAM-1384 au silicium sur cinq axes ; (c) comparaison des métriques électriques à Matam. Figure 300\,dpi, Nuit 9.}
+\label{fig:n9}
+\end{figure}
+
+Le tableau~\ref{tab:top10} donne le Top 10 équilibré (conditions de Matam, 47\,$^\circ$C).
+
+\begin{table}[htbp]
+\centering\footnotesize
+\begin{tabular}{@{}l l c c c c c@{}}
+\toprule
+ID & Formule & $E_g$ (eV) & $C$ & $\eta$ (\%) & Gain (\%) & Coût (USD/kg) \\
+\midrule
+UAM-1384 & K$_2$AgBiI$_6$      & 1{,}390 & $+1$ & 22{,}84 & $+29{,}1$ & 115{,}91 \\
+UAM-1099 & RbKAgBiI$_6$       & 1{,}450 & $+1$ & 22{,}42 & $+26{,}7$ & 119{,}19 \\
+UAM-0945 & Rb$_{0{,}5}$Na$_{1{,}5}$AgBiI$_6$ & 1{,}453 & $+1$ & 22{,}40 & $+26{,}5$ & 119{,}97 \\
+UAM-1277 & KCsAgBiI$_6$       & 1{,}459 & $+1$ & 22{,}31 & $+26{,}1$ & 116{,}72 \\
+UAM-1027 & Cs$_{1{,}5}$Na$_{0{,}5}$AgBiI$_6$ & 1{,}486 & $+1$ & 22{,}08 & $+24{,}8$ & 117{,}79 \\
+UAM-1517 & Ti$_3$C$_2$O$_2$   & 1{,}865 & $-1$ & 18{,}00 & $+1{,}7$  & 3{,}81 \\
+UAM-1633 & Ti$_2$C$_{0{,}5}$N$_{0{,}5}$O$_2$ & 1{,}888 & $-1$ & 17{,}69 & $-0{,}0$ & 3{,}54 \\
+UAM-1508 & Ti$_2$N$_1$O$_2$    & 1{,}980 & $-1$ & 16{,}37 & $-7{,}5$  & 3{,}48 \\
+UAM-1803 & Fe$_3$C$_{1{,}5}$N$_{0{,}5}$ & 1{,}482 & $-1$ & 21{,}83 & $+23{,}3$ & 0{,}68 \\
+UAM-1985 & Fe$_3$N$_1$C$_1$    & 1{,}545 & $-1$ & 21{,}16 & $+19{,}6$ & 0{,}66 \\
+\bottomrule
+\end{tabular}
+\caption{Top 10 équilibré issu du front de Pareto NSGA-II, évalué à Matam (47\,$^\circ$C, 1\,050\,W\,m$^{-2}$). Le gain est relatif au silicium de référence ($\eta_{\mathrm{Si}}=17{,}70\,\%$).}
+\label{tab:top10}
+\end{table}
+
+\subsection{Champion solaire UAM-1384 (K2AgBiI6)}
+
+La pérovskite double K$_2$AgBiI$_6$ (famille A$_2$BB'X$_6$, structure cubique $a=c=6{,}7116$\,Å, $\lambda_{\mathrm{SOC}}=0{,}45$\,eV) combine un gap de 1{,}3897\,eV, un invariant de Chern $C=+1$ et une mobilité électronique de 144,8\,cm$^2$\,V$^{-1}$\,s$^{-1}$. À Matam, le modèle couplé prédit $T_j=75{,}92\,^\circ$C, $V_{\mathrm{oc}}=1{,}0736$\,V, $J_{\mathrm{sc}}=32{,}14$\,mA\,cm$^{-2}$, $FF=0{,}695$ et $\eta=22{,}84\,\%$, soit $+29{,}1\,\%$ relativement au silicium. La vérification croisée par le solveur EDF donne 19,80\,\% contre 15,31\,\% pour le silicium, confirmant la tendance malgré la différence de niveau de modélisation. La limite de Shockley--Queisser à ce gap est 22,8413\,\% : le rendement calculé s'en approche sans la dépasser, comme exigé par le second principe. La température de jonction obtenue par le bilan simplifié (349,071\,K) diffère de celle du solveur complet de seulement 0,0077\,K, le résidu énergétique étant de $2{,}3\times10^{-13}$\,W\,m$^{-2}$. Le facteur de forme modéré (0,695) reflète la dérive thermique $\beta_T=-1{,}919\times10^{-3}$\,K$^{-1}$ et la mobilité limitée des trous (61,2\,cm$^2$\,V$^{-1}$\,s$^{-1}$).
+
+\subsection{Champion stockage UAM-1517 (Ti3C2O2)}
+
+Le MXène Ti$_3$C$_2$O$_2$ (famille M$_3$X$_2$, $a=2{,}96$\,Å, $c=18{,}85$\,Å, $t_1=2{,}3$\,eV) présente un gap de 1{,}8650\,eV et un invariant $C=-1$. Ses mobilités élevées (1\,042,5 et 484,7\,cm$^2$\,V$^{-1}$\,s$^{-1}$) et son coût modeste (3,81\,USD/kg) le désignent comme champion de stockage. À 47\,$^\circ$C, la capacité effective combinée atteint $C_{\mathrm{tot}}\approx120$\,F\,g$^{-1}$ par électrode, l'énergie spécifique $E_{47}=5{,}974$\,Wh\,kg$^{-1}$ et la rétention de capacité 98,11\,\% (contre 94\,\% exigés comme seuil de robustesse). La résistance ESR croît avec la température selon une loi d'Arrhenius avec énergie d'activation 0,15\,eV ; à Matam, elle dégrade modérément la puissance spécifique sans compromettre l'usage sur un cycle journalier. Le rendement photovoltaïque associé (18,00\,\%) est proche de celui du silicium (17,70\,\%), mais son rôle premier dans le couple champion est le stockage, où son coût et sa cyclabilité (500\,000 cycles) sont déterminants.
+
+Les dix-huit bornes vérifiées pour chaque champion incluent $\eta\leq\eta_{\mathrm{SQ}}$, $qV_{\mathrm{oc}}\leq E_g$, la positivité du résidu thermique, l'ordre des mobilités $D_n/D_p$, la limite supérieure $C_{\mathrm{tot}}<\min(C_Q,C_H)$ et la conservation du courant. Toutes sont satisfaites.
+
+% ======================================================================
+\section{Étude d'impact énergétique et économique au Sénégal}
+\label{sec:impact}
+% ======================================================================
+
+\subsection{Hypothèses du modèle}
+
+Une mini-centrale de 100\,kWc avec 100\,kWh de stockage est évaluée sur trois sites. Le tarif SENELEC de référence est fixé à 220\,FCFA/kWh, le facteur d'émission du réseau à 0,55\,t\,CO$_2$/MWh, le taux d'actualisation à 5\,\% sur 20 ans, le taux de change à 600\,FCFA/USD. La surface nécessaire est $A=P_{\mathrm{nom}}/(G_{\mathrm{ref}}\eta_{\mathrm{ref}})$ et la production annuelle réutilise l'intégration horaire sur 8\,760\,heures. L'énergie utile est pondérée par le rendement aller-retour (0,96 pour le couple champion, 0,86 pour la référence plomb/Li-ion). Le coût actualisé comprend le CAPEX, les O\&M (2\,\% pour le PV, 1\,\% pour le stockage) et le renouvellement des batteries selon leur cyclabilité. Le facteur d'annuité est $\mathrm{CRF}=r/[1-(1+r)^{-n}]$ et $\mathrm{LCOE}=C_{\mathrm{tot}}/E_{\mathrm{utile}}$.
+
+\subsection{Résultats}
+
+\begin{table}[htbp]
+\centering\footnotesize
+\begin{tabular}{@{}l c c c c c c@{}}
+\toprule
+Site & $T$ ($^\circ$C) & Champion & Classique & Gain & CO$_2$ & Économie \\
+     &                 & (MWh/an) & (MWh/an) & (MWh/an) & (t/an) & (M\,FCFA/an) \\
+\midrule
+Dakar        & 31 & 232,0 & 197,2 & +34,8  & 19,2 & 13,3 \\
+Saint-Louis  & 37 & 250,4 & 210,2 & +40,2  & 22,1 & 15,2 \\
+Matam        & 47 & 260,1 & 208,1 & +51,9  & 28,6 & 17,7 \\
+\midrule
+\textbf{Total} & — & \textbf{742,5} & \textbf{615,6} & \textbf{+126,9} & \textbf{69,8} & \textbf{46,2} \\
+\bottomrule
+\end{tabular}
+\caption{Impact énergétique, climatique et économique du couple UAM-1384 + UAM-1517 face au couple silicium + plomb/Li-ion, par site sénégalais.}
+\label{tab:impact}
+\end{table}
+
+Le gain agrégé de +126,9\,MWh/an correspond à la consommation électrique annuelle de plusieurs centaines de foyers sénégalais. Les 69,8\,t de CO$_2$ évitées chaque année équivalent à la séquestration par plusieurs milliers d'arbres. L'économie de 46,2\,M\,FCFA/an provient pour l'essentiel de la réduction du renouvellement des batteries : la cyclabilité du MXène (500\,000 cycles) divise ce poste par près de 180 par rapport à une batterie plomb/Li-ion (2\,750 cycles). Le LCOE passe de 84,8--83,0\,FCFA/kWh (référence) à 47,7--42,6\,FCFA/kWh (champion), soit une réduction de \textbf{43,8\,\% à 48,8\,\%} selon le site, avec un maximum à Matam où la chaleur pénalise davantage le silicium ($\beta_T=-4{,}5\times10^{-3}$\,K$^{-1}$) que la pérovskite double ($-1{,}9\times10^{-3}$\,K$^{-1}$). La figure~\ref{fig:n11} synthétise ces résultats.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{night11_senegal_impact.png}
+\caption{(a) Production annuelle utile à Dakar, Saint-Louis et Matam ; (b) gain en MWh/an et CO$_2$ évitées ; (c) LCOE actualisé champion versus classique ; (d) économies annuelles en M\,FCFA/an et bilan agrégé. Figure 300\,dpi, Nuit 11.}
+\label{fig:n11}
+\end{figure}
+
+\subsection{Interprétation pour la Twin Transition}
+
+Au-delà des chiffres, c'est la chaîne de souveraineté qui est démontrée : le même script Python, exécutable sur un ordinateur portable sans connexion, permet de passer d'une structure cristalline hypothétique à un diagnostic financier pour trois villes sénégalaises. L'interface web locale (FastAPI, port 8050) met ces calculs à la disposition d'un jury ou d'un ingénieur sans dépendance à un service cloud étranger. Cette traçabilité — chaque figure, chaque borne et chaque indicateur étant reproductible par \texttt{pytest} — constitue, à notre sens, la contribution la plus transférable de ce travail.
+
+% ======================================================================
+\section{Limites et perspectives expérimentales}
+\label{sec:limites}
+% ======================================================================
+
+Nous souhaitons être explicites sur les limites du présent travail, afin que les résultats soient interprétés à leur juste valeur.
+
+\begin{enumerate}
+  \item \textbf{Modélisation Tight-Binding paramétrée, pas DFT ab initio.} Les valeurs $t_{ij}$, $\lambda_{\mathrm{SOC}}$ et $\beta_T$ proviennent de corrélations chimiques calibrées, non d'un calcul self-consistent de la structure électronique. Les gaps et les invariants de Chern sont donc des prédictions de modèle, pas des mesures. Une validation par DFT (par exemple VASP \cite{kresse1996} avec spin--orbite et correction G$_0$W$_0$) est nécessaire avant toute synthèse.
+  \item \textbf{Absence de validation expérimentale.} Aucun échantillon de K$_2$AgBiI$_6$ ou de Ti$_3$C$_2$O$_2$ n'a été synthétisé. Les rendements annoncés sont des rendements de modèle sous hypothèse d'équilibre détaillé ; des pertes non modélisées (recombinaison aux joints de grains, résistances de contact, délaminage, humidité) réduiraient les performances réelles.
+  \item \textbf{Facteur module empirique.} Le rendement de terrain utilise un facteur 0,75 appliqué à $\eta_{\mathrm{SQ}}$, avec EQE 0,92 et absorption sélective. Ce facteur est une hypothèse de conception, non une mesure de module.
+  \item \textbf{Précision de NSGA-II.} Le front approché couvre 87,9\,\% du front exact (198 solutions sur 346). Certains compromis intermédiaires peuvent être manqués ; une exécution avec une population plus large ou un algorithme à base de référence (NSGA-III) améliorerait la couverture.
+  \item \textbf{Modèle économique simplifié.} Le coût des matériaux est estimé à partir d'indices d'abondance ouest-africains et de prix de matières premières ; il ignore la purification, la logistique, la main-d'œuvre, les taxes et le risque de change. Le tarif et le facteur d'émission sont des hypothèses constantes sur 20 ans.
+  \item \textbf{Climat et ressource solaire.} Les profils journaliers et saisonniers sont des sinusoïdes paramétrées, non des séries météorologiques mesurées (typiques SMHi/Meteonorm). L'impact réel dépendra des données site spécifiques.
+  \item \textbf{Stabilité à long terme.} La rétention de 98,11\,\% à 47\,$^\circ$C est calculée à 100\,A/kg sur la base d'un modèle de perte de pores ; aucune donnée de vieillissement accéléré n'est disponible.
+\end{enumerate}
+
+Les perspectives immédiates sont : (i) calcul DFT des deux champions avec inclusion du couplage spin--orbite pour confirmer les gaps et les tops de bande ; (ii) synthèse en laboratoire de pérovskites doubles sans plomb et préparation de MXenes par gravure sélective, puis caractérisation XRD, UV--Vis et électrochimique ; (iii) prototype de 1\,kWc instrumenté à Matam pour mesurer $\eta(T_j)$ et la dégradation saisonnière ; (iv) extension de la base à 10\,000 candidats avec des descripteurs appris et couplage à un simulateur de réseau (e.g. HOMER) ; (v) migration de l'interface vers un mode tablette hors ligne pour les techniciens sur le terrain.
+
+% ======================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% ======================================================================
+
+Nous avons présenté \TOPOMAT{}, une plateforme numérique souveraine qui automatise la conception de matériaux solaires et de stockage pour le climat sahélien. En reliant la cristallographie, la topologie quantique, l'optique, le transport, l'électrochimie, l'optimisation multi-objectifs et l'économie de l'énergie dans une chaîne unique vérifiable, la plateforme réduit le délai entre une hypothèse de matériau et une décision d'investissement. Deux champions émergent du criblage de 2\,000 composés sans plomb : K$_2$AgBiI$_6$ pour la conversion photovoltaïque et Ti$_3$C$_2$O$_2$ pour le stockage. Leur déploiement simulé à Dakar, Saint-Louis et Matam produirait +126,9\,MWh/an, éviterait 69,8\,t de CO$_2$/an et économiserait 46,2\,M\,FCFA/an, avec une baisse du LCOE de 44 à 49\,\%. Ces résultats sont des prédictions de modèle, explicitement bornées et reproductibles ; leur confirmation expérimentale est la prochaine étape. Sur le plan méthodologique, la démonstration qu'une chaîne scientifique complète peut être développée, certifiée et diffusée localement, sans dépendance à des services cloud, constitue une contribution concrète à la Twin Transition en Afrique de l'Ouest.
+
+% ======================================================================
+\section*{Bibliographie}
+\addcontentsline{toc}{section}{Bibliographie}
+% ======================================================================
+\begin{thebibliography}{99}
+\bibitem{aie2022} AIE, \emph{Africa Energy Outlook 2022}, International Energy Agency, Paris (2022).
+\bibitem{pse2014} République du Sénégal, \emph{Plan Sénégal Émergent (PSE)}, Dakar (2014).
+\bibitem{banque2022} Banque mondiale, \emph{World Development Indicators — Accès à l'électricité}, Washington (2022).
+\bibitem{ce2020} Commission européenne, \emph{The European Green Deal — Digitalisation and Twin Transition}, Bruxelles (2020).
+\bibitem{novoselov2004} K.~S. Novoselov \etal, \emph{Two-dimensional gas of massless Dirac fermions in graphene}, Nature \textbf{438}, 197--200 (2004).
+\bibitem{berry1984} M.~V. Berry, \emph{Quantal phase factors accompanying adiabatic changes}, Proc. R. Soc. Lond. A \textbf{392}, 45--57 (1984).
+\bibitem{thouless1982} D.~J. Thouless, M. Kohmoto, M.~P. Nightingale et M. den Nijs, \emph{Quantized Hall conductance in a two-dimensional periodic potential}, Phys. Rev. Lett. \textbf{49}, 405--408 (1982).
+\bibitem{haldane1988} F.~D.~M. Haldane, \emph{Model for a quantum Hall effect without Landau levels}, Phys. Rev. Lett. \textbf{61}, 2015--2018 (1988).
+\bibitem{fhs2005} T. Fukui, Y. Hatsugai et H. Suzuki, \emph{Chern numbers in discretized Brillouin zone}, J. Phys. Soc. Jpn. \textbf{74}, 1674--1677 (2005).
+\bibitem{shockley1961} W. Shockley et H.~J. Queisser, \emph{Detailed balance limit of efficiency of p--n junction solar cells}, J. Appl. Phys. \textbf{32}, 510--519 (1961).
+\bibitem{astm2012} ASTM International, \emph{Standard Tables for Reference Solar Spectral Irradiances: ASTM G173-03} (2012).
+\bibitem{scharfetter1969} D.~L. Scharfetter et H.~K. Gummel, \emph{Large-signal analysis of a silicon Read diode oscillator}, IEEE Trans. Electron Devices \textbf{16}, 64--77 (1969).
+\bibitem{sze2007} S.~M. Sze et K.~K. Ng, \emph{Physics of Semiconductor Devices}, 3e éd., Wiley-Interscience (2007).
+\bibitem{naguib2011} M. Naguib \etal, \emph{Two-dimensional transition metal carbides}, ACS Nano \textbf{5}, 8261--8267 (2011).
+\bibitem{gogotsi2011} Y. Gogotsi et P. Simon, \emph{Materials for electrochemical capacitors}, Science \textbf{334}, 917--918 (2011).
+\bibitem{deb2002} K. Deb, A. Pratap, S. Agarwal et T. Meyarivan, \emph{A fast and elitist multiobjective genetic algorithm: NSGA-II}, IEEE Trans. Evol. Comput. \textbf{6}, 182--197 (2002).
+\bibitem{volonakis2017} G. Volonakis \etal, \emph{Lead-free halide double perovskites via heterovalent substitution}, J. Phys. Chem. Lett. \textbf{8}, 1037--1045 (2017).
+\bibitem{kresse1996} G. Kresse et J. Furthmüller, \emph{Efficient iterative schemes for ab initio total-energy calculations}, Phys. Rev. B \textbf{54}, 11169--11186 (1996).
+\bibitem{stefan1879} J. Stefan, \emph{Über die Beziehung zwischen der Wärmestrahlung und der Temperatur}, Sitzungsber. Wien. Akad. \textbf{79}, 391--428 (1879).
+\bibitem{ndaye2026} N. Ndiaye, \emph{UAM-TOPOMAT — Journal de recherche, Nuits 1 à 12}, UAM / UFR STA / Cellule Physique, Dakar (2026).
+\end{thebibliography}
 
 \end{document}
