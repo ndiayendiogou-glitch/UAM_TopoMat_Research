@@ -33,11 +33,12 @@
       border-bottom: 4px solid var(--uam-gold);
     }
     .header-top {
-      display: flex; flex-wrap: wrap; gap: 18px;
+      display: flex; flex-wrap: nowrap; gap: 18px;
       align-items: center; justify-content: space-between;
       max-width: 1500px; margin: 0 auto;
     }
-    .brand { display: flex; align-items: center; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
+    .brand > div { min-width: 0; }
     .brand-logo {
       width: 58px; height: 74px; object-fit: contain;
       background: #fff; border-radius: 10px; padding: 3px;
@@ -48,6 +49,7 @@
     .brand p { margin: 4px 0 0; font-size: 13px; color: #cfe0ee; }
     .charter {
       text-align: right; font-size: 12.5px; line-height: 1.65; color: #e6f0f7;
+      flex: 0 0 auto; white-space: nowrap;
     }
     .charter strong { color: #fff; }
     .hero {
@@ -60,7 +62,7 @@
       background: var(--card); border: 1px solid var(--line); border-radius: 14px;
       box-shadow: var(--shadow);
     }
-    .controls { padding: 20px; display: grid; gap: 16px; grid-template-columns: repeat(4, 1fr); align-items: end; }
+    .controls { padding: 20px; display: grid; gap: 16px; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: end; }
     .control label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 7px; text-transform: uppercase; letter-spacing: .6px; }
     select, input[type="range"] { width: 100%; }
     select {
@@ -70,6 +72,7 @@
     }
     select:focus { border-color: var(--uam-green); box-shadow: 0 0 0 3px rgba(11,110,79,.15); }
     .temp-value { font-weight: 800; color: var(--uam-green); font-size: 15px; }
+    .power-note { margin-top: 7px; font-size: 11.5px; font-weight: 700; color: var(--uam-green); }
     input[type="range"] { accent-color: var(--uam-green); height: 26px; cursor: pointer; }
     .actions { display: flex; flex-direction: column; gap: 9px; }
     button {
@@ -114,6 +117,8 @@
     }
     .footer a { color: var(--uam-green); text-decoration: none; font-weight: 700; }
     @media (max-width: 1050px) {
+      .header-top { flex-wrap: wrap; }
+      .charter { white-space: normal; }
       .controls { grid-template-columns: repeat(2, 1fr); }
       .kpis { grid-template-columns: repeat(2, 1fr); }
       .charts { grid-template-columns: 1fr; }
@@ -145,7 +150,7 @@
 
 <div class="hero">
   <h2>Simulateur d'Impact Sénégal &amp; Démonstration Live</h2>
-  <p>Mini-centrale solaire de 100 kWc avec stockage supercondensateur hybride. Sélectionnez un matériau parmi les 2 000 candidats, ajustez le climat sahélien, puis lancez le pipeline complet : bandes, topologie, courbes électriques, Ragone et bilan FCFA/MWh.</p>
+  <p>Mini-centrale solaire de 15 à 500 kWc avec stockage supercondensateur hybride. Choisissez la puissance d'installation et son usage, sélectionnez un matériau parmi les 2 000 candidats, ajustez le climat sahélien, puis lancez le pipeline complet : bandes, topologie, courbes électriques, Ragone et bilan FCFA/MWh.</p>
 </div>
 
 <main>
@@ -172,6 +177,16 @@
       <label for="temperature">Température sahélienne : <span class="temp-value" id="temp-value">47 °C</span></label>
       <input id="temperature" type="range" min="20" max="55" step="1" value="47" aria-label="Température">
     </div>
+    <div class="control">
+      <label for="capacity">Puissance d'installation</label>
+      <select id="capacity" aria-label="Puissance d'installation">
+        <option value="15" data-usage="Poste de santé rural">15 kWc — Poste de santé rural</option>
+        <option value="50" data-usage="Forage agricole">50 kWc — Forage agricole</option>
+        <option value="100" data-usage="Mini-centrale villageoise" selected>100 kWc — Mini-centrale villageoise</option>
+        <option value="500" data-usage="Campus / Zone industrielle">500 kWc — Campus / Zone industrielle</option>
+      </select>
+      <div class="power-note" id="capacity-note">Mini-centrale villageoise · référence 100 kWc</div>
+    </div>
     <div class="actions">
       <button class="btn-run" id="run" type="button">Lancer le Pipeline Automatique Complet</button>
       <button class="btn-pdf" id="pdf" type="button">Télécharger la Fiche Technique PDF</button>
@@ -180,10 +195,10 @@
   <div class="status" id="status" aria-live="polite">Prêt. Le couple champion UAM-1384 + UAM-1517 est présélectionné.</div>
 
   <section class="kpis" aria-label="Indicateurs d'impact">
-    <div class="panel kpi"><div class="label">Gain annuel</div><div class="value" id="kpi-mwh">—</div><div class="sub">MWh/an d'électricité utile</div></div>
-    <div class="panel kpi"><div class="label">CO₂ évitées</div><div class="value" id="kpi-co2">—</div><div class="sub">tonnes/an vs réseau classique</div></div>
-    <div class="panel kpi"><div class="label">Économie annuelle</div><div class="value" id="kpi-fcfa">—</div><div class="sub">FCFA/an (CAPEX + O&amp;M + cycles)</div></div>
-    <div class="panel kpi"><div class="label">Coût du kWh</div><div class="value" id="kpi-lcoe">—</div><div class="sub">FCFA/kWh LCOE actualisé</div></div>
+    <div class="panel kpi"><div class="label">Gain annuel</div><div class="value" id="kpi-mwh">—</div><div class="sub" id="kpi-mwh-sub">MWh/an d'électricité utile</div></div>
+    <div class="panel kpi"><div class="label">CO₂ évitées</div><div class="value" id="kpi-co2">—</div><div class="sub" id="kpi-co2-sub">tonnes/an vs réseau classique</div></div>
+    <div class="panel kpi"><div class="label">Économie annuelle</div><div class="value" id="kpi-fcfa">—</div><div class="sub" id="kpi-fcfa-sub">FCFA/an (CAPEX + O&amp;M + cycles)</div></div>
+    <div class="panel kpi"><div class="label">Coût du kWh</div><div class="value" id="kpi-lcoe">—</div><div class="sub" id="kpi-lcoe-sub">FCFA/kWh LCOE actualisé</div></div>
   </section>
 
   <section class="charts" aria-label="Graphiques interactifs">
