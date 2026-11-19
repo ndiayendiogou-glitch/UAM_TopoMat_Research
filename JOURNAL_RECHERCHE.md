@@ -1285,8 +1285,67 @@ Tight-Binding (1) → courbure de Berry et Chern (2) → états de bord (3) →
 optique AM1.5G et Shockley--Queisser (4) → thermodynamique sahélienne (5) →
 EDP de transport et $J(V)$ (6) → supercondensateurs MXènes (7) → base de
 2~000 matériaux sans plomb (8) → découverte inverse NSGA-II (9) → preuves
-formelles SymPy et export PDF UAM (10). Aucune dépendance SciPy n'a été
-introduite ; 254 tests et dix figures/certificats sont reproduits à chaque
-exécution de `python -m pytest`.
+formelles SymPy et export PDF UAM (10) → impact énergétique Sénégal et
+interface live (11). Aucune dépendance SciPy n'a été introduite ; 282 tests
+et onze figures/certificats sont reproduits à chaque exécution de
+`python -m pytest`.
+
+## Nuit 11 — Impact Sénégal & Interface Live
+
+### 1. Simulateur de scénarios énergétiques (`src/thermo/senegal_grid_impact.py`)
+
+Une mini-centrale photovoltaïque de **100 kWc** associée à **100 kWh** de
+stockage est évaluée à Dakar (31 °C, 900 W/m²), Saint-Louis (37 °C,
+980 W/m²) et Matam (47 °C, 1050 W/m²). La surface nécessaire est déduite de
+la puissance crête et du rendement de référence,
+$A = P_{\mathrm{nom}}/(G_{\mathrm{ref}}\eta_{\mathrm{ref}})$ ; la production
+annuelle réutilise l'intégration Nuit 5 sur 8 760 heures, et l'énergie utile
+est pondérée par le rendement aller-retour du stockage. Le couple champion
+**UAM-1384 (K$_2$AgBiI$_6$) + UAM-1517 (Ti$_3$C$_2$O$_2$)** est comparé au
+couple classique **Silicium + batterie Plomb/Li-ion (50/50)**. Les coûts
+mobilisent le facteur d'annuité $\mathrm{CRF}=r(1+r)^n/((1+r)^n-1)$ avec
+$r=5\,\%$, $n=20$ ans, le renouvellement des batteries selon leur cyclabilité
+et un tarif réseau de 220 FCFA/kWh ; le facteur d'émission est fixé à
+0,55 t CO$_2$/MWh. Quatre lois économiques sont certifiées nulles par SymPy
+(identités CRF, LCOE, dérivées CO$_2$ et économies).
+
+### 2. Résultats chiffrés
+
+| Site | Couple champion (MWh/an) | Classique (MWh/an) | Gain (MWh/an) | CO$_2$ évitées (t/an) | Économie (M FCFA/an) | LCOE champion / classique (FCFA/kWh) |
+|---|---:|---:|---:|---:|---:|---:|
+| Dakar (31 °C) | 232,0 | 197,2 | +34,8 | 19,2 | 13,3 | 47,7 / 84,8 |
+| Saint-Louis (37 °C) | 250,4 | 210,2 | +40,2 | 22,1 | 15,2 | 44,2 / 83,0 |
+| Matam (47 °C) | 260,1 | 208,1 | +51,9 | 28,6 | 17,7 | 42,6 / 83,2 |
+| **Total** | **742,5** | **615,6** | **+126,9** | **69,8** | **46,2** | **−44 à −49 %** |
+
+La figure de publication `results/figures/night11_senegal_impact.png` (300 dpi,
+4 panneaux : production, gain/CO$_2$, LCOE, économies) et l'export structuré
+`results/senegal_impact.json` sont régénérés de façon déterministe par
+`python -m src.thermo.senegal_grid_impact`.
+
+### 3. Interface web de démonstration live
+
+`app/server.py` expose une application **FastAPI 100 % hors ligne** sur
+`http://127.0.0.1:8050` : aucun CDN ni ressource externe. L'en-tête porte la
+charte officielle **UAM – UFR STA – Cellule Physique, réalisé par Ndiogou
+Ndiaye**. Le jury peut sélectionner l'un des 2 000 matériaux (UAM-1384 et
+UAM-1517 mis en avant), choisir Dakar/Saint-Louis/Matam et ajuster la
+température de 25 à 55 °C. Un clic sur « Lancer le Pipeline Automatique
+Complet » (POST `/api/pipeline/run`) renvoie, pour le matériau choisi, la
+structure de bandes Tight-Binding, la courbure de Berry et l'invariant de
+Chern (FHS), la courbe $J(V)$ (EDF Nuit 6, repli diode SQ), le diagramme de
+Ragone (Nuit 7) et le bilan d'impact en MWh et FCFA. Les graphiques sont
+dessinés en SVG/Canvas natif dans `app/static/app.js` ; la fiche technique
+PDF officielle est téléchargeable via `/api/report/pdf`
+(`src/export_report.py`). Le script `LANCER_DEMO_JURY.bat` lance le serveur
+et le navigateur en un clic.
+
+### 4. Validation
+
+`python -m pytest -v` → **282 tests passés (254 + 28), soit 100 %**. La
+nouvelle suite `tests/test_night11.py` vérifie les identités de production,
+CO$_2$, FCFA et LCOE, la résolution 300 dpi, l'absence de SciPy et le code
+200 de **toutes** les routes API (y compris les 2 000 matériaux, les trois
+villes et les trois températures limites).
 
 **Diffusion :** Twin Transition Summit, 1er décembre 2026 — UAM / UFR STA / Cellule Physique.

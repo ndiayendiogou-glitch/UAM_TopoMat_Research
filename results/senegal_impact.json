@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "project": "UAM-TOPOMAT",
+    "night": 11,
+    "title": "Impact Senegal : mini-centrale 100 kWc + stockage hybride",
+    "charter": "Universite Amadou Mahtar Mbow / UFR STA / Cellule Physique",
+    "author": "Ndiogou Ndiaye",
+    "year": "2026-2027",
+    "sites": [
+      "Dakar",
+      "Saint-Louis",
+      "Matam"
+    ],
+    "champions": {
+      "solar": "UAM-1384",
+      "storage": "UAM-1517",
+      "solar_formula": "K2AgBiI6",
+      "storage_formula": "(hybride MXene)",
+      "top10_size": "10"
+    },
+    "assumptions": {
+      "plant_capacity_kwc": 100.0,
+      "storage_capacity_kwh": 100.0,
+      "grid_tariff_fcfa_per_kwh": 220.0,
+      "grid_co2_kg_per_kwh": 550.0,
+      "fcfa_per_usd": 600.0,
+      "discount_rate": 0.05,
+      "project_years": 20
+    }
+  },
+  "sites": {
+    "Dakar": {
+      "site": "Dakar",
+      "ambient_c": 31.0,
+      "champion_mwh_an": 232.04900486959954,
+      "classique_mwh_an": 197.225765268775,
+      "gain_mwh_an": 34.823239600824536,
+      "gain_percent": 17.65653668696287,
+      "co2_evitees_t_an": 19.152781780453495,
+      "economies_fcfa_an": 13325734.98201188,
+      "lcoe_champion_fcfa_kwh": 47.68804751675595,
+      "lcoe_classique_fcfa_kwh": 84.82961755766443,
+      "lcoe_reduction_fcfa_kwh": 37.14157004090848,
+      "lcoe_reduction_percent": 43.78372920950733
+    },
+    "Saint-Louis": {
+      "site": "Saint-Louis",
+      "ambient_c": 37.0,
+      "champion_mwh_an": 250.4065344583297,
+      "classique_mwh_an": 210.21389382639268,
+      "gain_mwh_an": 40.192640631937024,
+      "gain_percent": 19.119878282227404,
+      "co2_evitees_t_an": 22.105952347565367,
+      "economies_fcfa_an": 15206267.819932315,
+      "lcoe_champion_fcfa_kwh": 44.22864906137177,
+      "lcoe_classique_fcfa_kwh": 82.95850145157453,
+      "lcoe_reduction_fcfa_kwh": 38.729852390202765,
+      "lcoe_reduction_percent": 46.68581485022435
+    },
+    "Matam": {
+      "site": "Matam",
+      "ambient_c": 47.0,
+      "champion_mwh_an": 260.06440514632516,
+      "classique_mwh_an": 208.1436927989851,
+      "gain_mwh_an": 51.92071234734007,
+      "gain_percent": 24.944648405696604,
+      "co2_evitees_t_an": 28.55639179103704,
+      "economies_fcfa_an": 17668694.605936576,
+      "lcoe_champion_fcfa_kwh": 42.604721950862974,
+      "lcoe_classique_fcfa_kwh": 83.24109814285951,
+      "lcoe_reduction_fcfa_kwh": 40.63637619199654,
+      "lcoe_reduction_percent": 48.81768393090614
+    }
+  },
+  "aggregate": {
+    "gain_mwh_an": 126.93659258010163,
+    "co2_evitees_t_an": 69.8151259190559,
+    "economies_fcfa_an": 46200697.40788077,
+    "mwh_champion": 742.5199444742544,
+    "mwh_classique": 615.5833518941528
+  }
+}

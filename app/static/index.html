@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UAM-TOPOMAT — Nuit 11 — Simulateur d'Impact Sénégal</title>
+  <style>
+    :root {
+      --uam-blue: #0b2a4a;
+      --uam-blue-light: #144a7a;
+      --uam-green: #0b6e4f;
+      --uam-green-light: #17a673;
+      --uam-gold: #d9a441;
+      --ink: #152734;
+      --muted: #5b7183;
+      --paper: #f3f6f8;
+      --card: #ffffff;
+      --line: #d8e1e7;
+      --shadow: 0 10px 30px rgba(11, 42, 74, 0.08);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eaf0f4 0%, var(--paper) 320px);
+      min-height: 100vh;
+    }
+    header.uam-header {
+      background: linear-gradient(120deg, var(--uam-blue) 0%, var(--uam-blue-light) 100%);
+      color: #fff;
+      padding: 20px clamp(16px, 4vw, 48px) 26px;
+      border-bottom: 4px solid var(--uam-gold);
+    }
+    .header-top {
+      display: flex; flex-wrap: wrap; gap: 18px;
+      align-items: center; justify-content: space-between;
+      max-width: 1500px; margin: 0 auto;
+    }
+    .brand { display: flex; align-items: center; gap: 16px; }
+    .brand-mark {
+      width: 56px; height: 56px; border-radius: 12px;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.35);
+      display: grid; place-items: center; font-weight: 800; font-size: 20px;
+      letter-spacing: .5px; color: var(--uam-gold);
+    }
+    .brand h1 { margin: 0; font-size: clamp(17px, 2.2vw, 24px); letter-spacing: .3px; }
+    .brand p { margin: 4px 0 0; font-size: 13px; color: #cfe0ee; }
+    .charter {
+      text-align: right; font-size: 12.5px; line-height: 1.65; color: #e6f0f7;
+    }
+    .charter strong { color: #fff; }
+    .hero {
+      max-width: 1500px; margin: 22px auto 0; padding: 0 clamp(16px, 4vw, 48px);
+    }
+    .hero h2 { margin: 0 0 6px; font-size: clamp(22px, 3vw, 32px); color: var(--uam-blue); }
+    .hero p { margin: 0; color: var(--muted); max-width: 980px; line-height: 1.5; }
+    main { max-width: 1500px; margin: 0 auto; padding: 22px clamp(16px, 4vw, 48px) 48px; }
+    .panel {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    .controls { padding: 20px; display: grid; gap: 16px; grid-template-columns: repeat(4, 1fr); align-items: end; }
+    .control label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 7px; text-transform: uppercase; letter-spacing: .6px; }
+    select, input[type="range"] { width: 100%; }
+    select {
+      appearance: none; padding: 11px 12px; border-radius: 9px; border: 1px solid var(--line);
+      background: #fbfcfd; color: var(--ink); font-size: 14px; outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    select:focus { border-color: var(--uam-green); box-shadow: 0 0 0 3px rgba(11,110,79,.15); }
+    .temp-value { font-weight: 800; color: var(--uam-green); font-size: 15px; }
+    input[type="range"] { accent-color: var(--uam-green); height: 26px; cursor: pointer; }
+    .actions { display: flex; flex-direction: column; gap: 9px; }
+    button {
+      font: inherit; font-weight: 700; font-size: 14px; border-radius: 9px;
+      padding: 12px 16px; cursor: pointer; border: 0; transition: transform .12s, filter .12s, background .2s;
+    }
+    button:hover { transform: translateY(-1px); filter: brightness(1.06); }
+    button:disabled { opacity: .6; cursor: progress; transform: none; }
+    .btn-run { background: linear-gradient(120deg, var(--uam-green), var(--uam-green-light)); color: #fff; }
+    .btn-pdf { background: #eef3f6; color: var(--uam-blue); border: 1px solid var(--line); }
+    .status { margin-top: 12px; font-size: 13px; color: var(--muted); min-height: 19px; }
+    .status.error { color: #b3261e; }
+    .status.ok { color: var(--uam-green); }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 20px; }
+    .kpi { padding: 18px; position: relative; overflow: hidden; }
+    .kpi::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--uam-green); }
+    .kpi:nth-child(2)::before { background: var(--uam-blue-light); }
+    .kpi:nth-child(3)::before { background: var(--uam-gold); }
+    .kpi:nth-child(4)::before { background: #8e44ad; }
+    .kpi .label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
+    .kpi .value { font-size: clamp(22px, 2.5vw, 30px); font-weight: 800; margin: 8px 0 2px; color: var(--uam-blue); }
+    .kpi .sub { font-size: 12px; color: var(--muted); }
+    .charts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 20px; }
+    .chart-card { padding: 16px 18px 14px; min-width: 0; }
+    .chart-card.wide { grid-column: 1 / -1; }
+    .chart-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+    .chart-head h3 { margin: 0; font-size: 15px; color: var(--uam-blue); }
+    .chart-head span { font-size: 11.5px; color: var(--muted); }
+    .canvas-wrap { position: relative; width: 100%; height: 260px; }
+    .chart-card.wide .canvas-wrap { height: 300px; }
+    canvas { width: 100%; height: 100%; display: block; }
+    .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; font-size: 11.5px; color: var(--muted); }
+    .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+    .tooltip {
+      position: fixed; pointer-events: none; z-index: 30; display: none;
+      background: rgba(11,42,74,.94); color: #fff; padding: 7px 10px; border-radius: 7px;
+      font-size: 11.5px; line-height: 1.45; box-shadow: 0 6px 20px rgba(0,0,0,.2);
+    }
+    .footer {
+      max-width: 1500px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 30px;
+      color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    }
+    .footer a { color: var(--uam-green); text-decoration: none; font-weight: 700; }
+    @media (max-width: 1050px) {
+      .controls { grid-template-columns: repeat(2, 1fr); }
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+      .charts { grid-template-columns: 1fr; }
+      .chart-card.wide { grid-column: auto; }
+      .charter { text-align: left; }
+    }
+    @media (max-width: 620px) {
+      .controls, .kpis { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<header class="uam-header">
+  <div class="header-top">
+    <div class="brand">
+      <div class="brand-mark">UAM</div>
+      <div>
+        <h1>Université Amadou Mahtar Mbow — UFR STA — Cellule Physique</h1>
+        <p>UAM-TOPOMAT · Chaîne scientifique des Nuits 1 à 11 · Année universitaire 2026 — 2027</p>
+      </div>
+    </div>
+    <div class="charter">
+      <strong>Réalisé par : Ndiogou Ndiaye</strong><br>
+      <strong>République du Sénégal</strong><br>
+      Simulation énergétique · Dakar · Saint-Louis · Matam
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <h2>Nuit 11 — Simulateur d'Impact Sénégal &amp; Démonstration Live</h2>
+  <p>Mini-centrale solaire de 100 kWc avec stockage supercondensateur hybride. Sélectionnez un matériau parmi les 2 000 candidats, ajustez le climat sahélien, puis lancez le pipeline complet : bandes, topologie, courbes électriques, Ragone et bilan FCFA/MWh.</p>
+</div>
+
+<main>
+  <section class="panel controls" aria-label="Paramètres de simulation">
+    <div class="control">
+      <label for="material">Matériau (2 000 candidats)</label>
+      <select id="material" aria-label="Matériau"></select>
+    </div>
+    <div class="control">
+      <label for="city">Ville / site climatique</label>
+      <select id="city" aria-label="Ville">
+        <option value="Dakar">Dakar — 31 °C</option>
+        <option value="Saint-Louis">Saint-Louis — 37 °C</option>
+        <option value="Matam" selected>Matam — 47 °C</option>
+      </select>
+    </div>
+    <div class="control">
+      <label for="temperature">Température sahélienne : <span class="temp-value" id="temp-value">47 °C</span></label>
+      <input id="temperature" type="range" min="25" max="55" step="1" value="47" aria-label="Température">
+    </div>
+    <div class="actions">
+      <button class="btn-run" id="run" type="button">Lancer le Pipeline Automatique Complet</button>
+      <button class="btn-pdf" id="pdf" type="button">Télécharger la Fiche Technique PDF</button>
+    </div>
+  </section>
+  <div class="status" id="status" aria-live="polite">Prêt. Le couple champion UAM-1384 + UAM-1517 est présélectionné.</div>
+
+  <section class="kpis" aria-label="Indicateurs d'impact">
+    <div class="panel kpi"><div class="label">Gain annuel</div><div class="value" id="kpi-mwh">—</div><div class="sub">MWh/an d'électricité utile</div></div>
+    <div class="panel kpi"><div class="label">CO₂ évitées</div><div class="value" id="kpi-co2">—</div><div class="sub">tonnes/an vs réseau classique</div></div>
+    <div class="panel kpi"><div class="label">Économie annuelle</div><div class="value" id="kpi-fcfa">—</div><div class="sub">FCFA/an (CAPEX + O&amp;M + cycles)</div></div>
+    <div class="panel kpi"><div class="label">Coût du kWh</div><div class="value" id="kpi-lcoe">—</div><div class="sub">FCFA/kWh LCOE actualisé</div></div>
+  </section>
+
+  <section class="charts" aria-label="Graphiques interactifs">
+    <div class="panel chart-card">
+      <div class="chart-head"><h3>(a) Structure de bandes Tight-Binding</h3><span id="band-info">—</span></div>
+      <div class="canvas-wrap"><canvas id="chart-band"></canvas></div>
+      <div class="legend"><span><i style="background:#0b2a4a"></i>Bandes E<sub>n</sub>(k)</span><span><i style="background:#d9a441"></i>Niveau de Fermi</span></div>
+    </div>
+    <div class="panel chart-card">
+      <div class="chart-head"><h3>(b) Courbure de Berry / invariant de Chern</h3><span id="chern-info">—</span></div>
+      <div class="canvas-wrap"><canvas id="chart-berry"></canvas></div>
+      <div class="legend"><span><i style="background:#2c7bb6"></i>Ω &lt; 0</span><span><i style="background:#f7f7f7;border:1px solid #ccc"></i>0</span><span><i style="background:#d7191c"></i>Ω &gt; 0</span></div>
+    </div>
+    <div class="panel chart-card">
+      <div class="chart-head"><h3>(c) Caractéristique électrique J(V)</h3><span id="jv-info">—</span></div>
+      <div class="canvas-wrap"><canvas id="chart-jv"></canvas></div>
+      <div class="legend"><span><i style="background:#0b6e4f"></i>J(V) calculée</span><span><i style="background:#9ecae1"></i>Point de puissance max.</span></div>
+    </div>
+    <div class="panel chart-card">
+      <div class="chart-head"><h3>(d) Diagramme de Ragone à température du site</h3><span id="ragone-info">—</span></div>
+      <div class="canvas-wrap"><canvas id="chart-ragone"></canvas></div>
+      <div class="legend"><span><i style="background:#8e44ad"></i>Énergie spécifique (Wh/kg)</span><span><i style="background:#d9a441"></i>Puissance spécifique (W/kg)</span></div>
+    </div>
+    <div class="panel chart-card wide">
+      <div class="chart-head"><h3>(e) Bilan d'impact énergétique au Sénégal — MWh/an &amp; FCFA/kWh</h3><span>Champion UAM-1384 + UAM-1517 vs Silicium + Plomb/Li-ion</span></div>
+      <div class="canvas-wrap"><canvas id="chart-impact"></canvas></div>
+      <div class="legend"><span><i style="background:#0b6e4f"></i>Couple champion</span><span><i style="background:#9ecae1"></i>Couple classique</span><span><i style="background:#d9a441"></i>Économies (M FCFA/an)</span></div>
+    </div>
+  </section>
+</main>
+
+<div class="footer">
+  <span>100 % hors ligne — FastAPI locale sur <strong>http://127.0.0.1:8050</strong> — aucune ressource CDN externe.</span>
+  <span><a href="/api/report/pdf" download>Fiche technique PDF officielle</a> · <a href="/api/figures/night11" download>Figure 300 dpi</a></span>
+</div>
+<div class="tooltip" id="tooltip"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
