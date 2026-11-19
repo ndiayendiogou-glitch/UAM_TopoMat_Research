@@ -293,11 +293,15 @@ function drawImpact(results) {
     });
   });
   ctx.fillStyle = COLORS.gold;
-  ctx.font = "bold 11px Segoe UI, Arial, sans-serif";
+  ctx.font = "bold 9px Segoe UI, Arial, sans-serif";
   ctx.textAlign = "center"; ctx.textBaseline = "top";
   results.forEach((r, i) => {
     const x = pad.l + (i + 0.5) * (half / results.length);
-    ctx.fillText(`+${fmtInt(r.economies_fcfa_an / 1e6)} M FCFA/an`, x, pad.t + 2);
+    const millions = fmtInt(r.economies_fcfa_an / 1e6);
+    const y = pad.t + 2 + (results.length > 4 && i % 2 === 1 ? 11 : 0);
+    ctx.fillText(`+${millions} M`, x, y);
+    addHover("chart-impact", x, y + 5,
+      `${r.site} · économies : +${millions} M FCFA/an`);
   });
 }
 
