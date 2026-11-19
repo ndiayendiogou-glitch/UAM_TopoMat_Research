@@ -461,7 +461,7 @@ def _make_night2_figure(output_path: Path) -> dict:
     )
 
     figure.suptitle(
-        "UAM-TOPOMAT — Nuit 2 : courbure de Berry, invariant de Chern et phase de Haldane",
+        "UAM-TOPOMAT — courbure de Berry, invariant de Chern et phase de Haldane",
         fontsize=12.5,
         y=0.995,
     )

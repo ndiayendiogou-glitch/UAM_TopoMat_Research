@@ -472,7 +472,7 @@ def _make_night7_figure(output_path: Path) -> dict:
     ax_retention.legend(loc="lower left", framealpha=0.9)
 
     figure.suptitle(
-        "UAM-TOPOMAT — Nuit 7 : supercondensateurs topologiques MXènes sans plomb et diagramme de Ragone sahélien",
+        "UAM-TOPOMAT — supercondensateurs topologiques MXènes sans plomb et diagramme de Ragone sahélien",
         fontsize=12.0, y=0.995,
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)

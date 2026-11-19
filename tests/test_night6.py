@@ -410,7 +410,7 @@ def _make_night6_figure(output_path: Path) -> dict:
     ax_density.legend(loc="center left", fontsize=6.5, framealpha=0.9, ncol=2)
 
     figure.suptitle(
-        "UAM-TOPOMAT — Nuit 6 : EDP Poisson–Scharfetter–Gummel et courbes $J(V)$ sous climat sahélien",
+        "UAM-TOPOMAT — EDP Poisson–Scharfetter–Gummel et courbes $J(V)$ sous climat sahélien",
         fontsize=12.5,
         y=0.995,
     )

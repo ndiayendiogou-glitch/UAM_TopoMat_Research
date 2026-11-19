@@ -505,7 +505,7 @@ def _make_night5_figure(output_path: Path) -> dict:
     ax_production.legend(loc="upper left", framealpha=0.9)
 
     figure.suptitle(
-        "UAM-TOPOMAT — Nuit 5 : bilan thermodynamique sahélien et rendement haute température",
+        "UAM-TOPOMAT — bilan thermodynamique sahélien et rendement haute température",
         fontsize=12.5,
         y=0.995,
     )

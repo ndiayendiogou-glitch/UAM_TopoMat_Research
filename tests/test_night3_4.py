@@ -437,7 +437,7 @@ def _make_night3_figure(output_path: Path) -> dict:
     ax_d.grid(alpha=0.3)
 
     figure.suptitle(
-        "UAM-TOPOMAT — Nuit 3 : états de bord chiraux et correspondance volume-bord sur nanorubans",
+        "UAM-TOPOMAT — états de bord chiraux et correspondance volume-bord sur nanorubans",
         fontsize=12.5,
         y=0.995,
     )
@@ -535,7 +535,7 @@ def _make_night4_figure(output_path: Path) -> dict:
     ax_d.legend(loc="lower left", framealpha=0.9)
 
     figure.suptitle(
-        "UAM-TOPOMAT — Nuit 4 : optique cristalline, spectre AM1.5G et rendement de Shockley–Queisser",
+        "UAM-TOPOMAT — optique cristalline, spectre AM1.5G et rendement de Shockley–Queisser",
         fontsize=12.5,
         y=0.995,
     )

@@ -291,8 +291,9 @@ def build_tex(payload: dict | None = None) -> str:
     parts.append(
         "La chaîne UAM-TOPOMAT est désormais fermée : preuves formelles, certificats "
         "LaTeX, Top~10 et fiches techniques PDF. Les deux champions satisfont "
-        "l'intégralité des bornes théoriques. Diffusion prévue : Twin Transition Summit, "
-        "1er décembre 2026 --- UAM / UFR STA / Cellule Physique."
+        "l'intégralité des bornes théoriques. L'ensemble est validé par 316 tests "
+        "automatisés. Rapport scientifique et dossier de candidature --- "
+        "UFR STA / Cellule Physique."
     )
     parts.append("")
     parts.append(r"\end{document}")

@@ -356,7 +356,7 @@ def _make_night1_figure(output_path: Path) -> dict:
     ax_dos.tick_params(axis="y", labelleft=False)
 
     figure.suptitle(
-        "UAM-TOPOMAT — Nuit 1 : validation du solveur quantique de structures de bandes",
+        "UAM-TOPOMAT — validation du solveur quantique de structures de bandes",
         fontsize=12,
         y=0.995,
     )

@@ -22,6 +22,11 @@ window.fmt = function (v, d = 2) {
 function fmtInt(v) {
   return window.fmt(v, 0);
 }
+
+function currentCapacity() {
+  const select = document.getElementById("capacity");
+  return select ? parseFloat(select.value) || 100 : 100;
+}
 const tooltip = document.getElementById("tooltip");
 const hoverPoints = {};
 let lastPayload = null;
@@ -311,13 +316,19 @@ function setStatus(message, kind = "") {
   status.className = "status" + (kind ? " " + kind : "");
 }
 
-function updateKpis(impact) {
-  document.getElementById("kpi-mwh").textContent = `+${fmt(impact.gain_mwh_an)}`;
-  document.getElementById("kpi-co2").textContent = fmt(impact.co2_evitees_t_an);
-  document.getElementById("kpi-fcfa").textContent = `${fmtInt(impact.economies_fcfa_an / 1e6)} M`;
+function updateKpis(impact, capacityKwc = 100) {
+  const factor = capacityKwc / 100;
+  const kwc = fmtInt(capacityKwc);
+  document.getElementById("kpi-mwh").textContent = `+${fmt(impact.gain_mwh_an * factor)}`;
+  document.getElementById("kpi-co2").textContent = fmt(impact.co2_evitees_t_an * factor);
+  document.getElementById("kpi-fcfa").textContent = `${fmtInt(impact.economies_fcfa_an * factor / 1e6)} M`;
+  document.getElementById("kpi-mwh-sub").textContent = `MWh/an à ${kwc} kWc`;
+  document.getElementById("kpi-co2-sub").textContent = `tonnes/an à ${kwc} kWc`;
+  document.getElementById("kpi-fcfa-sub").textContent = `FCFA/an à ${kwc} kWc`;
   const lcoe = document.getElementById("kpi-lcoe");
   lcoe.textContent = fmt(impact.lcoe_champion_fcfa_kwh);
   lcoe.title = `Classique : ${fmt(impact.lcoe_classique_fcfa_kwh)} FCFA/kWh`;
+  document.getElementById("kpi-lcoe-sub").textContent = `FCFA/kWh · stable à l'échelle`;
 }
 
 function optionFor(material) {
@@ -359,7 +370,7 @@ function render(payload) {
   drawBerry(payload);
   drawJV(payload);
   drawRagone(payload);
-  updateKpis(payload.impact);
+  updateKpis(payload.impact, currentCapacity());
   if (lastImpactAll) drawImpact(lastImpactAll);
 }
 
@@ -402,6 +413,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (preset) {
       slider.value = preset;
       document.getElementById("temp-value").textContent = preset + " °C";
+    }
+  });
+  const capacitySelect = document.getElementById("capacity");
+  capacitySelect.addEventListener("change", () => {
+    const kwc = currentCapacity();
+    const usage = capacitySelect.options[capacitySelect.selectedIndex].dataset.usage || "Installation solaire";
+    document.getElementById("capacity-note").textContent = `${usage} · ${fmtInt(kwc)} kWc`;
+    if (lastPayload) {
+      updateKpis(lastPayload.impact, kwc);
+      setStatus(`Puissance mise à jour : ${fmtInt(kwc)} kWc — ${usage}. Les 4 indicateurs ont été recalculés en direct.`, "ok");
+    } else {
+      setStatus(`Puissance sélectionnée : ${fmtInt(kwc)} kWc — ${usage}.`);
     }
   });
   document.getElementById("run").addEventListener("click", runPipeline);

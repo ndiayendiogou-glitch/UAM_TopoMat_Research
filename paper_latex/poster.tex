@@ -1,181 +1,221 @@
 % ======================================================================
-%  UAM-TOPOMAT — Poster scientifique A0 portrait (version finale)
+%  UAM-TOPOMAT — Poster A0 moderne (841 x 1189 mm), 3 colonnes
 %  Université Amadou Mahtar Mbow / UFR STA / Cellule Physique
-%  Réalisé par : Ndiogou Ndiaye — Année universitaire 2026 – 2027
-%  Compilation : pdflatex poster.tex  (1 page, prêt à imprimer)
+%  Ndiogou Ndiaye — Année universitaire 2026 – 2027
+%  Compilation : pdflatex poster.tex  (1 seule page A0)
 % ======================================================================
-\documentclass[11pt]{article}
+\documentclass[a0paper,portrait]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
-\usepackage{amsmath,amssymb}
 \usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{array}
 \usepackage{xcolor}
+\usepackage[a0paper,portrait,left=14mm,right=14mm,top=12mm,bottom=12mm]{geometry}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
 \usepackage[hidelinks]{hyperref}
-\usepackage[a0paper,portrait,margin=18mm]{geometry}
+
+\pagestyle{empty}
+\parindent   = 0pt
+\parskip     = 0pt
+
+\definecolor{glacier}{HTML}{F1F5F9}
+\definecolor{navy}{HTML}{0F294A}
+\definecolor{solar}{HTML}{F59E0B}
+\definecolor{ink}{HTML}{152734}
+\definecolor{muted}{HTML}{5B7183}
+\definecolor{green}{HTML}{0B6E4F}
+\definecolor{violet}{HTML}{7C3AED}
+\definecolor{white}{HTML}{FFFFFF}
+\definecolor{pastelA}{HTML}{F8FAFC}
+\definecolor{pastelB}{HTML}{EFF6FF}
+\definecolor{pastelC}{HTML}{ECFDF5}
+\definecolor{emerald}{HTML}{047857}
+\definecolor{gold}{HTML}{B45309}
+\pagecolor{glacier}
 
 \graphicspath{{../results/figures/}{./}}
-\pagestyle{empty}
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{0.7em}
 
-\definecolor{uamblue}{HTML}{0B2A4A}
-\definecolor{uamgreen}{HTML}{0B6E4F}
-\definecolor{uamgold}{HTML}{D9A441}
+\newlength{\kpiw}
+\setlength{\kpiw}{\dimexpr(\textwidth-24mm)/4\relax}
+\newlength{\colw}
+\setlength{\colw}{\dimexpr(\textwidth-18mm)/3\relax}
+\newlength{\colheight}
+\setlength{\colheight}{700mm}
 
-\newcommand{\bighead}[1]{\textcolor{uamblue}{\fontsize{34}{39}\selectfont\textbf{#1}}}
-\newcommand{\sectionhead}[1]{\textcolor{uamblue}{\fontsize{46}{54}\selectfont\textbf{#1}}\par\vspace{0.35em}}
-\newcommand{\bignum}[1]{\textcolor{uamgreen}{\fontsize{86}{96}\selectfont\textbf{#1}}}
-\newcommand{\tinycap}[1]{\textcolor{black!65!black}{\fontsize{28}{33}\selectfont #1}}
+\newcommand{\sect}[1]{\textcolor{navy}{\fontsize{56}{64}\selectfont\textbf{#1}}\par\vspace{5mm}}
+\newcommand{\bulletline}[1]{%
+  \textcolor{green}{\fontsize{38}{38}\selectfont\textbf{\textbullet}}\quad
+  \textcolor{ink}{\fontsize{38}{54}\selectfont #1}\par\vspace{5mm}}
+\newcommand{\capfig}[1]{\textcolor{muted}{\fontsize{26}{31}\selectfont #1}\par}
+
+\newcommand{\kpi}[4]{%
+\begin{tcolorbox}[width=\kpiw,colback=#1,colframe=#1,boxrule=0pt,
+                   arc=5mm,outer arc=5mm,
+                   left=6mm,right=6mm,top=12mm,bottom=12mm,nobeforeafter]
+  \color{#2}{\fontsize{104}{110}\selectfont\textbf{#3}}\par\vspace{3mm}
+  \color{#2}{\fontsize{28}{33}\selectfont #4}
+\end{tcolorbox}}
+
+\newcommand{\champcard}[3]{%
+\begin{tcolorbox}[width=\linewidth,colback=white,colframe=#1,boxrule=1.2mm,
+                   arc=4mm,outer arc=4mm,
+                   left=6mm,right=6mm,top=5mm,bottom=5mm,nobeforeafter]
+   \textcolor{#1}{\fontsize{32}{38}\selectfont\textbf{#2}}\par\vspace{3mm}
+   \textcolor{ink}{\fontsize{28}{38}\selectfont #3}
+\end{tcolorbox}}
+
+\tcbset{uamcard/.style={%
+  enhanced,arc=6mm,outer arc=6mm,boxrule=0.9mm,
+  left=5mm,right=5mm,top=4mm,bottom=4mm,
+  toptitle=2.5mm,bottomtitle=2.5mm,
+  coltitle=white,fonttitle=\fontsize{38}{44}\selectfont\bfseries,
+  width=\linewidth,before skip=0pt,after skip=0pt}}
+
+\newtcolorbox{cardnavy}[2][pastelB]{uamcard,colback=#1,colframe=navy,
+  colbacktitle=navy,title={#2}}
+\newtcolorbox{cardemerald}[2][pastelC]{uamcard,colback=#1,colframe=emerald,
+  colbacktitle=emerald,title={#2}}
+\newtcolorbox{cardgold}[2][pastelA]{uamcard,colback=#1,colframe=gold,
+  colbacktitle=gold,title={#2}}
 
 \begin{document}
-\fontsize{38}{46}\selectfont
 
 % ----------------------------------------------------------------------
-% EN-TÊTE
+% BANDEAU SUPÉRIEUR BLEU MARINE + LISERÉ OR + LOGO + QR CODE
+% ----------------------------------------------------------------------
+\noindent\hspace*{-14mm}\begingroup\setlength{\fboxsep}{0pt}%
+\colorbox{navy}{\parbox{\paperwidth}{%
+  \vspace{9mm}%
+  \begin{minipage}[c]{42mm}\hspace{5mm}\includegraphics[width=36mm]{logo_uam.png}\end{minipage}\hfill
+  \begin{minipage}[c]{660mm}
+    \textcolor{white}{\fontsize{88}{94}\selectfont\textbf{UAM-TOPOMAT}}\\[3mm]
+    \textcolor{solar}{\fontsize{36}{42}\selectfont\textbf{Matériaux quantiques \& stockage pour le climat sahélien}}\\[3mm]
+    \textcolor{white!82!navy}{\fontsize{25}{30}\selectfont
+      Université Amadou Mahtar Mbow $\cdot$ UFR Sciences et Technologies Avancées $\cdot$
+      Cellule Physique $\cdot$ Ndiogou Ndiaye $\cdot$ 2026--2027}
+  \end{minipage}\hfill
+  \begin{minipage}[c]{92mm}\centering
+    \includegraphics[width=50mm]{qr_uam_topomat.png}\\[2mm]
+    \textcolor{white}{\fontsize{23}{27}\selectfont\textbf{Démo interactive}}\\[1mm]
+    \textcolor{solar}{\fontsize{23}{27}\selectfont\textbf{onrender.com}}
+  \end{minipage}%
+  \vspace{9mm}%
+}}\endgroup\par
+\vspace{3mm}
+\noindent\hspace*{-14mm}{\color{solar}\hrule height 2.5mm width \paperwidth}\par
+\vspace{9mm}
+
+% ----------------------------------------------------------------------
+% BANDEAU DE CARTES KPI (4 chiffres géants)
 % ----------------------------------------------------------------------
 \noindent
-\begin{minipage}[c]{0.13\textwidth}
-  \centering\includegraphics[width=0.92\textwidth]{logo_uam.png}
-\end{minipage}\hfill
-\begin{minipage}[c]{0.84\textwidth}
-  \textcolor{uamblue}{\fontsize{84}{90}\selectfont\textbf{UAM-TOPOMAT}}\\[0.2em]
-  \textcolor{uamblue}{\fontsize{42}{49}\selectfont Plateforme numérique souveraine de conception quantique, topologique et thermodynamique de matériaux solaires et de stockage pour le climat sahélien}\\[0.5em]
-  \textcolor{uamgreen}{\fontsize{29}{35}\selectfont\textbf{UNIVERSITÉ AMADOU MAHTAR MBOW · UFR SCIENCES ET TECHNOLOGIES AVANCÉES · CELLULE PHYSIQUE}}\\
-  \textcolor{black!70!black}{\fontsize{36}{42}\selectfont Réalisé par : Ndiogou Ndiaye · Année universitaire 2026 -- 2027 · Twin Transition Summit, 1er décembre 2026}
-\end{minipage}
-
-\vspace{0.6em}
-{\color{uamgold}\hrule height 2.5pt}
-\vspace{0.6em}
+\kpi{green}{white}{+29,1\,\%}{Rendement Matam}\hfill
+\kpi{navy}{white}{98,11\,\%}{Rétention MXène}\hfill
+\kpi{solar}{navy}{42,60}{FCFA/kWh Matam}\hfill
+\kpi{violet}{white}{28,56\,t}{CO$_2$ évitées/an}\par
+\vspace{11mm}
 
 % ----------------------------------------------------------------------
-% COLONNE 1 — PROBLÈME, PIPELINE, TOPOLOGIE
+% TROIS COLONNES ÉQUILIBRÉES — 8 CARTES AUX COULEURS UAM
 % ----------------------------------------------------------------------
 \noindent
-\begin{minipage}[t]{0.315\textwidth}
+\begin{minipage}[t][\colheight][t]{\colw}
 \raggedright
 
-\sectionhead{1. Le paradoxe sahélien}
+\begin{cardnavy}{1. Le défi sahélien}
+\bulletline{1\,500--2\,200 kWh/m$^2$/an de soleil}
+\bulletline{47\,$^\circ$C à Matam : le rendement chute}
+\bulletline{Twin Transition : énergie + numérique souverain}
+\end{cardnavy}
 
-Le Sahel reçoit 1\,500--2\,200\,kWh\,m$^{-2}$\,an$^{-1}$ d'ensoleillement, mais l'accès à une électricité fiable reste limité. À Matam (47\,$^\circ$C), la chaleur dégrade le rendement des modules et accélère le vieillissement des batteries. Répondre à ce défi exige la \textbf{Twin Transition} : énergétique \emph{et} numérique, avec des outils maîtrisés localement.
-
-\sectionhead{2. Pipeline automatisé (5 étapes)}
-
-\begin{enumerate}
-\item \textbf{Cristallographie + Tight-Binding} : réseaux 2D/3D, bandes $E_n(\mathbf{k})$, DOS, cône de Dirac ($v_F=8{,}74\times10^5$\,m\,s$^{-1}$).
-\item \textbf{Topologie} : courbure de Berry, invariant de Chern $C\in\mathbb{Z}$ (FHS), états de bord $2|C|$.
-\item \textbf{Optique + climat} : AM1.5G, Shockley--Queisser (33,94\,\% à 1,34\,eV), bilan radiatif--convectif.
-\item \textbf{Transport + stockage} : Scharfetter--Gummel conservatif, $J(V)$, MXènes à capacité quantique.
-\item \textbf{Découverte inverse} : 2\,000 candidats sans plomb, NSGA-II à 4 objectifs, impact MWh/FCFA.
-\end{enumerate}
+\vfill
+\begin{cardemerald}{2. Pipeline en 5 étapes}
+\bulletline{Cristallographie + Tight-Binding}
+\bulletline{Berry / Chern : topologie certifiée}
+\bulletline{Optique AM1.5G + climat sahélien}
+\bulletline{Transport $J(V)$ + stockage MXène}
+\bulletline{Découverte inverse NSGA-II}
 
 \begin{center}
-\includegraphics[width=0.95\textwidth]{night2_haldane_chern_phase.png}\\
-\tinycap{Courbure de Berry et diagramme de phase de Chern (300\,dpi).}
+\includegraphics[width=\linewidth]{night6_jv_curves_sahel.png}\\[2mm]
+\capfig{Courbes $J(V)$ en conditions sahéliennes --- 300 dpi}
 \end{center}
+\end{cardemerald}
 
-\sectionhead{3. Six théorèmes certifiés}
-
-Tight-Binding/Hellmann--Feynman · Berry/Chern · Shockley--Queisser · Stefan--Boltzmann · Scharfetter--Gummel · capacité série $C_Q/C_H$. \textbf{Résidus symboliques nuls} (SymPy) et \textbf{36 bornes physiques vérifiées} (18 par champion). Zéro dépendance SciPy.
+\vfill
+\begin{cardgold}{3. Zéro dépendance SciPy}
+\bulletline{6 théorèmes certifiés symboliquement}
+\bulletline{36 bornes physiques vérifiées}
+\bulletline{316 tests automatisés}
+\end{cardgold}
 
 \end{minipage}\hfill
-% ----------------------------------------------------------------------
-% COLONNE 2 — CHAMPIONS
-% ----------------------------------------------------------------------
-\begin{minipage}[t]{0.315\textwidth}
+\begin{minipage}[t][\colheight][t]{\colw}
 \raggedright
 
-\sectionhead{4. 2\,000 matériaux criblés}
-
-Base déterministe (graine 2026) : 900 ABX$_3$, 550 doubles halogénées, 550 MXènes ; sans Pb ni Co, neutralité électrique garantie. NSGA-II (population 300, 250 générations) donne un front de 198 solutions (précision 87,9\,\% vs 346 sur le front exact, hypervolume 2\,151,99).
+\begin{cardnavy}{4. 2\,000 matériaux criblés}
+\bulletline{900 ABX$_3$ + 550 doubles + 550 MXènes}
+\bulletline{Sans Pb ni Co, neutralité électrique}
+\bulletline{Front NSGA-II : 198 solutions}
 
 \begin{center}
-\includegraphics[width=0.95\textwidth]{night9_pareto_discovery.png}\\
-\tinycap{Espace de Pareto, front NSGA-II et Top 10 (300\,dpi).}
+\includegraphics[width=\linewidth]{night9_pareto_discovery.png}\\[2mm]
+\capfig{Espace de Pareto, front NSGA-II et Top 10 --- 300 dpi}
 \end{center}
+\end{cardnavy}
 
-\sectionhead{5. Les deux champions}
+\vfill
+\begin{cardemerald}{5. Les deux champions}
 
-\smallskip
-\textcolor{uamblue}{\textbf{UAM-1384 — K$_2$AgBiI$_6$ (solaire)}}\\
-Gap $E_g=1{,}390$\,eV · $C=+1$ · $\mu_n=144{,}8$\,cm$^2$\,V$^{-1}$\,s$^{-1}$ · $T_j=75{,}9\,^\circ$C · $V_{\mathrm{oc}}=1{,}074$\,V · $J_{\mathrm{sc}}=32{,}14$\,mA\,cm$^{-2}$ · $FF=0{,}695$ · \textbf{$\eta_{\mathrm{Matam}}=22{,}84\,\%$} · gain \textbf{+29,1\,\%} vs Si · coût 115,91\,USD/kg.
-
-\smallskip
-\textcolor{uamblue}{\textbf{UAM-1517 — Ti$_3$C$_2$O$_2$ (stockage)}}\\
-Gap $1{,}865$\,eV · $C=-1$ · $\mu_n=1\,042{,}5$\,cm$^2$\,V$^{-1}$\,s$^{-1}$ · $C_{\mathrm{tot}}\approx120$\,F\,g$^{-1}$ · \textbf{$E_{47}=5{,}97$\,Wh\,kg$^{-1}$} · rétention \textbf{98,11\,\%} à 47\,$^\circ$C · 500\,000 cycles · coût 3,81\,USD/kg.
-
-\smallskip
-\begin{tabular}{@{}lccc@{}}
-\toprule
-ID & $E_g$ (eV) & $\eta$ (\%) & Coût \\
-\midrule
-UAM-1384 & 1,390 & 22,84 & 115,91 \\
-UAM-1099 & 1,450 & 22,42 & 119,19 \\
-UAM-1517 & 1,865 & 18,00 & 3,81 \\
-UAM-1803 & 1,482 & 21,83 & 0,68 \\
-\bottomrule
-\end{tabular}
-
-\tinycap{Extrait du Top 10 équilibré (conditions Matam, 47\,$^\circ$C).}
-
-\sectionhead{6. Originalité}
-
-Une seule chaîne relie l'électronique quantique à la décision économique, avec figures 300\,dpi, certificats LaTeX et interface web locale reproductibles par \texttt{pytest} (282 tests).
+\champcard{green}{UAM-1384 --- K$_2$AgBiI$_6$ (solaire)}
+  {Gap 1,390 eV $\cdot$ $C=+1$ $\cdot$ $\eta=22{,}84\,\%$ à 47\,$^\circ$C}
+\vspace{6mm}
+\champcard{violet}{UAM-1517 --- Ti$_3$C$_2$O$_2$ (stockage)}
+  {Gap 1,865 eV $\cdot$ $C=-1$ $\cdot$ 5,97 Wh/kg à 47\,$^\circ$C}
+\begin{center}
+\includegraphics[width=\linewidth]{night7_ragone_mxene_sahel.png}\\[2mm]
+\capfig{Ragone du supercondensateur MXène --- 300 dpi}
+\end{center}
+\end{cardemerald}
 
 \end{minipage}\hfill
-% ----------------------------------------------------------------------
-% COLONNE 3 — IMPACT
-% ----------------------------------------------------------------------
-\begin{minipage}[t]{0.315\textwidth}
+\begin{minipage}[t][\colheight][t]{\colw}
 \raggedright
 
-\sectionhead{7. Impact au Sénégal}
-
-Mini-centrale \textbf{100\,kWc + 100\,kWh}, Dakar / Saint-Louis / Matam, tarif 220\,FCFA/kWh, 0,55\,t\,CO$_2$/MWh, CRF 5\,\% sur 20 ans. Couple champion vs silicium + plomb/Li-ion.
-
-\smallskip
-\noindent\begin{tabular}{@{}ccc@{}}
-\multicolumn{3}{c}{\bignum{+126,9}}\\
-\multicolumn{3}{c}{\textcolor{uamblue}{\fontsize{36}{42}\selectfont\textbf{MWh/an de gain}}}\\
-\midrule
-\textcolor{uamgreen}{\fontsize{62}{70}\selectfont\textbf{69,8}} & \textcolor{uamgreen}{\fontsize{62}{70}\selectfont\textbf{46,2}} & \textcolor{uamgreen}{\fontsize{62}{70}\selectfont\textbf{44--49\,\%}}\\
-\textcolor{black!70!black}{\fontsize{28}{33}\selectfont t CO$_2$ évitées/an} & \textcolor{black!70!black}{\fontsize{28}{33}\selectfont M FCFA économisés/an} & \textcolor{black!70!black}{\fontsize{28}{33}\selectfont baisse du LCOE}\\
-\end{tabular}
-
-\smallskip
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-Site & Gain & CO$_2$ & Économie\\
-     & MWh/an & t/an & M\,FCFA/an\\
-\midrule
-Dakar (31\,$^\circ$C) & +34,8 & 19,2 & 13,3\\
-Saint-Louis (37\,$^\circ$C) & +40,2 & 22,1 & 15,2\\
-Matam (47\,$^\circ$C) & +51,9 & 28,6 & 17,7\\
-\midrule
-\textbf{Total} & \textbf{+126,9} & \textbf{69,8} & \textbf{46,2}\\
-\bottomrule
-\end{tabular}
+\begin{cardgold}{6. Impact au Sénégal}
+\bulletline{Mini-centrale 100 kWc + 100 kWh}
+\bulletline{Dakar $\cdot$ Saint-Louis $\cdot$ Matam}
+\bulletline{220 FCFA/kWh $\cdot$ 0,55 t CO$_2$/MWh}
 
 \begin{center}
-\includegraphics[width=0.95\textwidth]{night11_senegal_impact.png}\\
-\tinycap{Production, gain/CO$_2$, LCOE et économies — bilan multi-régions (300\,dpi).}
+\includegraphics[width=\linewidth]{night11_senegal_impact.png}\\[2mm]
+\capfig{Bilan multi-régions : MWh, CO$_2$, LCOE et FCFA --- 300 dpi}
 \end{center}
+\vspace{5mm}
 
-\sectionhead{8. Démonstration live}
+\textcolor{navy}{\fontsize{28}{35}\selectfont\textbf{+126,9 MWh/an $\cdot$ 69,8 t CO$_2$/an $\cdot$ 46,2 M FCFA/an $\cdot$ baisse LCOE 44--49\,\%}}
+\end{cardgold}
 
-Double-clic sur \texttt{LANCER\_DEMO\_JURY.bat} → serveur FastAPI \textbf{100\,\% hors ligne} sur \texttt{http://127.0.0.1:8050}. Choisir un matériau, une ville, la température, puis « Lancer le Pipeline Automatique Complet » : bandes, Chern, $J(V)$, Ragone, impact en direct. Fiche PDF officielle via \texttt{/api/report/pdf}.
+\vfill
+\begin{cardnavy}{7. Démonstration live}
+\bulletline{Serveur FastAPI 100\,\% hors ligne}
+\bulletline{Matériau, ville et température au choix}
+\bulletline{Pipeline complet en un seul clic}
+\bulletline{Lancer : \texttt{LANCER\_DEMO\_JURY.bat}}
+\end{cardnavy}
 
-\sectionhead{9. Limites et perspectives}
+\vfill
+\begin{cardemerald}{8. Perspectives}
+\bulletline{DFT + couplage spin--orbite}
+\bulletline{Synthèse de K$_2$AgBiI$_6$ et Ti$_3$C$_2$O$_2$}
+\bulletline{Prototype 1 kWc à Matam}
+\end{cardemerald}
 
-Modèles Tight-Binding paramétrés (pas de DFT), aucun échantillon synthétisé, facteur module empirique 0,75, précision NSGA-II 87,9\,\%. Prochaines étapes : DFT + spin--orbite, synthèse de K$_2$AgBiI$_6$ et Ti$_3$C$_2$O$_2$, prototype 1\,kWc à Matam.
-
-\smallskip
-\textcolor{uamgold}{\rule{\textwidth}{3pt}}\\
-\textcolor{uamblue}{\textbf{UAM / UFR STA / Cellule Physique · Ndiogou Ndiaye · 2026--2027}}
+\vfill
+{\color{solar}\hrule height 1.2mm}\par\vspace{4mm}
+\textcolor{navy}{\fontsize{25}{30}\selectfont\textbf{UAM / UFR STA / Cellule Physique --- Ndiogou Ndiaye --- 2026--2027}}
 
 \end{minipage}
 

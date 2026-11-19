@@ -513,7 +513,7 @@ def _make_night8_figure(output_path: Path) -> dict:
     ax_counts.grid(alpha=0.25, axis="y")
 
     figure.suptitle(
-        "UAM-TOPOMAT — Nuit 8 : cartographie de 2000 matériaux cristallins "
+        "UAM-TOPOMAT — cartographie de 2000 matériaux cristallins "
         "sans plomb (ressources d'Afrique de l'Ouest)",
         fontsize=12.0, y=0.995,
     )
