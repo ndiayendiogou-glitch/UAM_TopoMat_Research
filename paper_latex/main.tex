@@ -1,5 +1,5 @@
 % ======================================================================
-%  UAM-TOPOMAT — Article scientifique complet (Nuit 12 Finale)
+%  UAM-TOPOMAT — Article scientifique complet (version finale)
 %  Université Amadou Mahtar Mbow / UFR Sciences et Technologies Avancées
 %  Cellule Physique / Réalisé par : Ndiogou Ndiaye / 2026 – 2027
 %  Compilation : pdflatex main.tex (deux passes)
@@ -59,12 +59,12 @@
 {\large\textbf{de Matériaux Solaires et de Stockage}}\\[0.15em]
 {\large\textbf{pour le Climat Sahélien}}\par\vspace{1.0cm}
 
-{\large\textbf{Article scientifique complet — Nuit 12 Finale}}\par\vspace{1.2cm}
+{\large\textbf{Article scientifique complet — version finale}}\par\vspace{1.2cm}
 
 \begin{tcolorbox}[colback=blue!5,colframe=blue!50!black,width=0.88\linewidth]
 {\large\textbf{Réalisé par : Ndiogou Ndiaye}}\\[0.35em]
 \textbf{Année universitaire : 2026 – 2027}\\[0.35em]
-\textbf{Chaîne de recherche : Nuits 1 à 12 — 300 dpi, zéro dépendance SciPy}\\[0.35em]
+\textbf{Chaîne de recherche intégrée — 300 dpi, zéro dépendance SciPy}\\[0.35em]
 \textbf{Diffusion : Twin Transition Summit, 1er décembre 2026}
 \end{tcolorbox}\par\vspace{0.8cm}
 
@@ -109,7 +109,7 @@ Trois choix structurants méritent d'être soulignés.
 
 \begin{enumerate}
   \item \textbf{Un formalisme certifiable.} Chaque équation fondatrice est dérivée puis vérifiée symboliquement par SymPy ; les résidus sont identiquement nuls et les bornes physiques des matériaux champions sont contrôlées une à une (36 vérifications).
-  \item \textbf{Une chaîne fermée et reproductible.} Les onze premières nuits produisent des modules, onze figures 300\,dpi, deux certificats LaTeX et une interface web locale. La Nuit 12 les consolide en un article et un poster de soutenance.
+  \item \textbf{Une chaîne fermée et reproductible.} Les modules scientifiques produisent des solveurs validés, onze figures 300\,dpi, deux certificats LaTeX et une interface web locale. La synthèse finale les consolide en un article et un poster de soutenance.
   \item \textbf{Une orientation impact.} Le criblage n'est pas une fin en soi : les deux champions alimentent directement un modèle de centrale de 100\,kWc évalué sur trois sites sénégalais, avec conversion en MWh, tonnes de CO$_2$ évitées, FCFA économisés et LCOE actualisé.
 \end{enumerate}
 
@@ -129,7 +129,7 @@ La plateforme est organisée en cinq étapes séquentielles, chacune corresponda
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}c l l l@{}}
 \toprule
-Étape & Module principal & Sortie scientifique & Nuits \\
+Étape & Module principal & Sortie scientifique & Solveurs \\
 \midrule
 1 & \texttt{src/quantum/} & Réseaux, bandes $E_n(\mathbf{k})$, DOS, cône de Dirac & 1 \\
 2 & \texttt{src/topology/} & Courbure $\Omega$, invariant $C$, états de bord & 2--3 \\
@@ -149,7 +149,7 @@ Le module \texttt{lattice.py} construit les réseaux directs et réciproques 2D/
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{night1_bands_dos.png}
-\caption{Structure de bandes Tight-Binding et densité d'états du graphène. L'encadré met en évidence le croisement linéaire au point $K$ (cône de Dirac). Figure 300\,dpi, Nuit 1.}
+\caption{Structure de bandes Tight-Binding et densité d'états du graphène. L'encadré met en évidence le croisement linéaire au point $K$ (cône de Dirac). Figure 300\,dpi — structure électronique.}
 \label{fig:n1}
 \end{figure}
 
@@ -160,32 +160,32 @@ La méthode de Fukui--Hatsugai--Suzuki \cite{fhs2005} calcule le flux de Berry s
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{night2_haldane_chern_phase.png}
-\caption{(a) Courbure de Berry dans la première zone de Brillouin du modèle de Haldane ; (b) diagramme de phase $(\varphi, M/t_2)$ avec les régions $C=+1$, $C=-1$ et $C=0$. Les étoiles marquent les points testés. Figure 300\,dpi, Nuit 2.}
+\caption{(a) Courbure de Berry dans la première zone de Brillouin du modèle de Haldane ; (b) diagramme de phase $(\varphi, M/t_2)$ avec les régions $C=+1$, $C=-1$ et $C=0$. Les étoiles marquent les points testés. Figure 300\,dpi — courbure de Berry et topologie de Chern.}
 \label{fig:n2}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{night3_edge_states_ribbon.png}
-\caption{Spectres $E(k_x)$ de rubans topologiques et triviaux. Les états de bord chiraux sont mis en évidence ; leur localisation exponentielle confirme la correspondance bulk--boundary $n_{\mathrm{channels}}=2|C|$. Figure 300\,dpi, Nuit 3.}
+\caption{Spectres $E(k_x)$ de rubans topologiques et triviaux. Les états de bord chiraux sont mis en évidence ; leur localisation exponentielle confirme la correspondance bulk--boundary $n_{\mathrm{channels}}=2|C|$. Figure 300\,dpi — états de bord chiraux.}
 \label{fig:n3}
 \end{figure}
 
 \subsection{Étape 3 — Optique solaire et bilan thermique sahélien}
 
-Le spectre AM1.5G (ASTM G173) est interpolé puis normalisé à 1\,000\,W\,m$^{-2}$ \cite{astm2012}. Le flux photonique au-dessus de la bande interdite donne $J_{\mathrm{sc}}$ ; le courant de saturation $J_0$ découle de l'émission radiative à l'équilibre détaillé, ce qui permet de résoudre la limite de Shockley--Queisser \cite{shockley1961}. La figure~\ref{fig:n4} présente $\eta_{\mathrm{SQ}}(E_g,T)$, la dégradation thermique et l'absorption calculée. Le bilan radiatif--convectif de la Nuit 5 détermine la température de jonction $T_j$ en régime permanent (figure~\ref{fig:n5}).
+Le spectre AM1.5G (ASTM G173) est interpolé puis normalisé à 1\,000\,W\,m$^{-2}$ \cite{astm2012}. Le flux photonique au-dessus de la bande interdite donne $J_{\mathrm{sc}}$ ; le courant de saturation $J_0$ découle de l'émission radiative à l'équilibre détaillé, ce qui permet de résoudre la limite de Shockley--Queisser \cite{shockley1961}. La figure~\ref{fig:n4} présente $\eta_{\mathrm{SQ}}(E_g,T)$, la dégradation thermique et l'absorption calculée. Le bilan radiatif--convectif détermine la température de jonction $T_j$ en régime permanent (figure~\ref{fig:n5}).
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{night4_solar_efficiency_vs_temp.png}
-\caption{(a) Limite de Shockley--Queisser $\eta(E_g,T)$ ; (b) dégradation thermique à $E_g=1{,}34$\,eV (pente $\approx-0{,}043$ point/K) ; (c) spectre AM1.5G et longueur d'onde de coupure ; (d) absorption $\alpha(\lambda)$ issue du Tight-Binding. Figure 300\,dpi, Nuit 4.}
+\caption{(a) Limite de Shockley--Queisser $\eta(E_g,T)$ ; (b) dégradation thermique à $E_g=1{,}34$\,eV (pente $\approx-0{,}043$ point/K) ; (c) spectre AM1.5G et longueur d'onde de coupure ; (d) absorption $\alpha(\lambda)$ issue du Tight-Binding. Figure 300\,dpi — optique AM1.5G et limite de Shockley--Queisser.}
 \label{fig:n4}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{night5_sahel_thermal_balance.png}
-\caption{(a) Température de jonction et rendement $\eta(T_j)$ en fonction de la température ambiante pour Dakar, Saint-Louis et Matam ; (b) production annuelle comparative. Figure 300\,dpi, Nuit 5.}
+\caption{(a) Température de jonction et rendement $\eta(T_j)$ en fonction de la température ambiante pour Dakar, Saint-Louis et Matam ; (b) production annuelle comparative. Figure 300\,dpi — bilan thermique et rendement annuel.}
 \label{fig:n5}
 \end{figure}
 
@@ -196,14 +196,14 @@ Le module \texttt{carrier\_transport.py} résout le système Poisson--dérive--d
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{night6_jv_curves_sahel.png}
-\caption{(a) Caractéristiques $J(V)$ pour trois climats ; (b) courbes de puissance et points de puissance maximale ; (c) potentiel électrostatique $\varphi(x)$ à $V=0$ ; (d) profils $n(x)$ et $p(x)$ en échelle logarithmique. Figure 300\,dpi, Nuit 6.}
+\caption{(a) Caractéristiques $J(V)$ pour trois climats ; (b) courbes de puissance et points de puissance maximale ; (c) potentiel électrostatique $\varphi(x)$ à $V=0$ ; (d) profils $n(x)$ et $p(x)$ en échelle logarithmique. Figure 300\,dpi — équations de dérive-diffusion et caractéristiques $J(V)$.}
 \label{fig:n6}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{night7_ragone_mxene_sahel.png}
-\caption{(a) Diagramme de Ragone du MXène à 25\,$^\circ$C et à Matam (47\,$^\circ$C) comparé aux batteries Li-ion et aux supercondensateurs commerciaux ; (b) ESR en fonction de la température ; (c) cycles galvanostatiques ; (d) rétention de capacité. Figure 300\,dpi, Nuit 7.}
+\caption{(a) Diagramme de Ragone du MXène à 25\,$^\circ$C et à Matam (47\,$^\circ$C) comparé aux batteries Li-ion et aux supercondensateurs commerciaux ; (b) ESR en fonction de la température ; (c) cycles galvanostatiques ; (d) rétention de capacité. Figure 300\,dpi — diagramme de Ragone des MXènes.}
 \label{fig:n7}
 \end{figure}
 
@@ -358,7 +358,7 @@ La base \texttt{data/african\_materials\_db.json} contient $N=2\,000$ composés 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{night8_materials_landscape.png}
-\caption{(a) Histogrammes des gaps par famille ; (b) corrélation $E_g$--$\beta_T$ ; (c) abondance ouest-africaine versus coût ; (d) répartition des 2\,000 candidats. Figure 300\,dpi, Nuit 8.}
+\caption{(a) Histogrammes des gaps par famille ; (b) corrélation $E_g$--$\beta_T$ ; (c) abondance ouest-africaine versus coût ; (d) répartition des 2\,000 candidats. Figure 300\,dpi — paysage des matériaux candidats.}
 \label{fig:n8}
 \end{figure}
 
@@ -369,7 +369,7 @@ NSGA-II est configuré avec une population de 300 individus, 250 générations, 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{night9_pareto_discovery.png}
-\caption{(a) Espace des 2\,000 candidats avec le front de Pareto (346 points) et le Top 10 (étoiles dorées) ; (b) radar comparant UAM-1384 au silicium sur cinq axes ; (c) comparaison des métriques électriques à Matam. Figure 300\,dpi, Nuit 9.}
+\caption{(a) Espace des 2\,000 candidats avec le front de Pareto (346 points) et le Top 10 (étoiles dorées) ; (b) radar comparant UAM-1384 au silicium sur cinq axes ; (c) comparaison des métriques électriques à Matam. Figure 300\,dpi — optimisation NSGA-II et front de Pareto.}
 \label{fig:n9}
 \end{figure}
 
@@ -441,7 +441,7 @@ Le gain agrégé de +126,9\,MWh/an correspond à la consommation électrique ann
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{night11_senegal_impact.png}
-\caption{(a) Production annuelle utile à Dakar, Saint-Louis et Matam ; (b) gain en MWh/an et CO$_2$ évitées ; (c) LCOE actualisé champion versus classique ; (d) économies annuelles en M\,FCFA/an et bilan agrégé. Figure 300\,dpi, Nuit 11.}
+\caption{(a) Production annuelle utile à Dakar, Saint-Louis et Matam ; (b) gain en MWh/an et CO$_2$ évitées ; (c) LCOE actualisé champion versus classique ; (d) économies annuelles en M\,FCFA/an et bilan agrégé. Figure 300\,dpi — bilan énergétique multi-régions (Sénégal).}
 \label{fig:n11}
 \end{figure}
 
@@ -499,7 +499,7 @@ Nous avons présenté \TOPOMAT{}, une plateforme numérique souveraine qui autom
 \bibitem{volonakis2017} G. Volonakis \etal, \emph{Lead-free halide double perovskites via heterovalent substitution}, J. Phys. Chem. Lett. \textbf{8}, 1037--1045 (2017).
 \bibitem{kresse1996} G. Kresse et J. Furthmüller, \emph{Efficient iterative schemes for ab initio total-energy calculations}, Phys. Rev. B \textbf{54}, 11169--11186 (1996).
 \bibitem{stefan1879} J. Stefan, \emph{Über die Beziehung zwischen der Wärmestrahlung und der Temperatur}, Sitzungsber. Wien. Akad. \textbf{79}, 391--428 (1879).
-\bibitem{ndaye2026} N. Ndiaye, \emph{UAM-TOPOMAT — Journal de recherche, Nuits 1 à 12}, UAM / UFR STA / Cellule Physique, Dakar (2026).
+\bibitem{ndaye2026} N. Ndiaye, \emph{UAM-TOPOMAT — Journal de recherche 2026 – 2027}, UAM / UFR STA / Cellule Physique, Dakar (2026).
 \end{thebibliography}
 
 \end{document}

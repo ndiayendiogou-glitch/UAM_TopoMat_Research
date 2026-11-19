@@ -1,7 +1,8 @@
-"""UAM-TOPOMAT -- Nuit 5 : bilan thermodynamique sahelien.
+"""UAM-TOPOMAT : bilan thermodynamique sahelien.
 
 Modele stationnaire et transitoire d'une cellule photovoltaique et d'un module
-hybride PV/T sous les conditions reelles du Senegal (Dakar, Saint-Louis, Matam).
+hybride PV/T sous les conditions reelles du Senegal (Dakar, Saint-Louis, Matam,
+Podor, Tambacounda, Kaolack, Louga, Ziguinchor et region personnalisee).
 
 Bilan de puissance par unite de surface :
 
@@ -17,7 +18,7 @@ La resolution de T_j utilise un Newton-Raphson avec der analytique et
 sauvegarde par bissection (vectorise NumPy), complete par un solveur de Brent
 pour les cas scalaires. Le rendement suit la loi exponentielle a derivee
 thermique exacte eta(T) = eta_ref * exp(beta_T * (T - T_ref)), avec
-beta_T = (1/eta) * d(eta)/dT. Le spectre AM1.5G de la Nuit 4 fournit
+beta_T = (1/eta) * d(eta)/dT. Le spectre AM1.5G certifie fournit
 l'absorption ponderee par alpha(lambda) et le rendement Shockley-Queisser
 de reference. Python pur : numpy, sympy, matplotlib. Aucune dependance SciPy.
 """
@@ -61,7 +62,18 @@ class SahelSite:
 DAKAR = SahelSite("Dakar", 31.0, 900.0, 3.5, 6.0)
 SAINT_LOUIS = SahelSite("Saint-Louis", 37.0, 980.0, 4.0, 7.5)
 MATAM = SahelSite("Matam", 47.0, 1050.0, 1.8, 9.0)
+PODOR = SahelSite("Podor", 48.0, 1060.0, 1.6, 9.5)
+TAMBACOUNDA = SahelSite("Tambacounda", 44.0, 1030.0, 2.2, 8.5)
+KAOLACK = SahelSite("Kaolack", 40.0, 1000.0, 2.8, 7.0)
+LOUGA = SahelSite("Louga", 39.0, 990.0, 3.2, 7.5)
+ZIGUINCHOR = SahelSite("Ziguinchor", 34.0, 920.0, 3.0, 5.5)
+CUSTOM_REGION = SahelSite("Région personnalisée", 47.0, 1000.0, 2.5, 8.0)
+
 SAHEL_SITES: tuple[SahelSite, ...] = (DAKAR, SAINT_LOUIS, MATAM)
+SENEGAL_SITES: tuple[SahelSite, ...] = (
+    DAKAR, SAINT_LOUIS, MATAM, PODOR, TAMBACOUNDA,
+    KAOLACK, LOUGA, ZIGUINCHOR, CUSTOM_REGION,
+)
 
 
 @dataclass(frozen=True)

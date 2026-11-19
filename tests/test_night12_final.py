@@ -131,8 +131,10 @@ def test_logo_is_displayed_in_web_header() -> None:
     assert 'src="/static/logo_uam.png"' in html
     assert 'class="brand-logo"' in html
     for token in ("UAM-TOPOMAT", "Cellule Physique UFR STA", "Université Amadou Mahtar Mbow",
-                  "Ndiogou Ndiaye", "Nuit 11"):
+                  "Ndiogou Ndiaye", "Laboratoire Numérique Souverain",
+                  "Podor", "Tambacounda", "Ziguinchor", "Région personnalisée"):
         assert token in html, token
+    assert "Nuit" not in html
     assert "https://" not in html
     assert "cdn." not in html.lower()
 
@@ -145,6 +147,16 @@ def test_logo_is_integrated_in_pdf_export_generator() -> None:
     for token in ("UNIVERSITÉ AMADOU MAHTAR MBOW", "UFR SCIENCES ET TECHNOLOGIES AVANCÉES",
                   "CELLULE PHYSIQUE", "Réalisé par : Ndiogou Ndiaye", "2026 -- 2027"):
         assert token in source, token
+
+
+def test_pdf_sources_have_no_nuit_mentions() -> None:
+    sources = (
+        ARTICLE_TEX.read_text(encoding="utf-8"),
+        POSTER_TEX.read_text(encoding="utf-8"),
+        build_tex(),
+    )
+    for source in sources:
+        assert not re.search(r"\b[Nn]uits?\b", source)
 
 
 # ---------------------------------------------------------------------------

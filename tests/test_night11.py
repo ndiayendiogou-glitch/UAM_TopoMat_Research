@@ -45,6 +45,12 @@ from src.thermo.senegal_grid_impact import (  # noqa: E402
 )
 
 SITES = ("Dakar", "Saint-Louis", "Matam")
+SENEGAL_ZONES = (
+    "Dakar", "Saint-Louis", "Matam", "Podor",
+    "Tambacounda", "Kaolack", "Louga", "Ziguinchor",
+    "Région personnalisée",
+)
+ZONE_TEMPERATURES = (31.0, 37.0, 47.0, 48.0, 44.0, 40.0, 39.0, 34.0)
 IMPACT_KEYS = (
     "site", "ambient_c", "champion_mwh_an", "classique_mwh_an", "gain_mwh_an",
     "gain_percent", "co2_evitees_t_an", "economies_fcfa_an",
@@ -95,9 +101,13 @@ def test_site_catalog_and_temperature_override() -> None:
     assert [site.ambient_c for site in DEFAULT_SITES] == [31.0, 37.0, 47.0]
     assert site_by_name("Dakar").ambient_c == 31.0
     assert site_by_name("saint-louis", 55.0).ambient_c == 55.0
+    assert [site_by_name(name).ambient_c for name in SENEGAL_ZONES[:-1]] == list(
+        ZONE_TEMPERATURES
+    )
+    assert site_by_name("region personnalisee", 20.0).ambient_c == 20.0
     assert site_at_temperature(DEFAULT_SITES[2], 25.0).ambient_c == 25.0
     with pytest.raises(ValueError):
-        site_at_temperature(DEFAULT_SITES[0], 20.0)
+        site_at_temperature(DEFAULT_SITES[0], 19.0)
     with pytest.raises(ValueError):
         site_by_name("Inconnu")
 
@@ -248,8 +258,11 @@ def test_root_and_static_assets_return_200(client: TestClient) -> None:
     response = client.get("/")
     assert response.status_code == 200
     html = response.text
-    for token in ("Université", "UFR STA", "Cellule Physique", "Ndiogou Ndiaye", "Nuit 11"):
+    for token in ("Université", "UFR STA", "Cellule Physique", "Ndiogou Ndiaye",
+                  "Laboratoire Numérique Souverain", "Sénégal &amp; Sahel",
+                  "Région personnalisée", "Bilan énergétique multi-régions (300 dpi)"):
         assert token in html, token
+    assert "Nuit" not in html
     assert "cdn." not in html.lower()
     assert "https://" not in html
     assert '<script src="http' not in html.lower()
@@ -296,6 +309,17 @@ def test_impact_route_returns_200_for_all_cities(client: TestClient, city: str, 
     assert data["ambient_c"] == temperature
     assert data["gain_mwh_an"] > 0.0
     assert data["economies_fcfa_an"] > 0.0
+
+
+@pytest.mark.parametrize("city", SENEGAL_ZONES)
+def test_impact_route_returns_200_for_every_senegal_zone(client: TestClient, city: str) -> None:
+    response = client.get("/api/impact", params={"city": city, "temperature_c": 20.0})
+    assert response.status_code == 200
+    data = response.json()
+    assert tuple(data.keys()) == IMPACT_KEYS
+    assert data["site"] == city
+    assert data["ambient_c"] == 20.0
+    assert data["gain_mwh_an"] > 0.0
 
 
 @pytest.mark.parametrize("material_id,chern", ((SOLAR_CHAMPION_ID, 1), (MXENE_CHAMPION_ID, -1)))
@@ -355,7 +379,7 @@ def test_report_pdf_route_returns_200(client: TestClient) -> None:
 def test_invalid_requests_are_rejected(client: TestClient) -> None:
     assert client.post(
         "/api/pipeline/run",
-        json={"material_id": SOLAR_CHAMPION_ID, "temperature_c": 20.0, "city": "Matam"},
+        json={"material_id": SOLAR_CHAMPION_ID, "temperature_c": 19.0, "city": "Matam"},
     ).status_code == 422
     assert client.post(
         "/api/pipeline/run",

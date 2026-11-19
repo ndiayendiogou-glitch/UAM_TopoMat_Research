@@ -10,12 +10,17 @@ const COLORS = {
   muted: "#5b7183",
 };
 
-function fmt(v, d = 2) {
+const SENEGAL_ZONES = [
+  "Dakar", "Saint-Louis", "Matam", "Podor",
+  "Tambacounda", "Kaolack", "Louga", "Ziguinchor",
+];
+
+window.fmt = function (v, d = 2) {
   const n = Number(v);
   return Number.isFinite(n) ? n.toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d }) : "—";
-}
+};
 function fmtInt(v) {
-  return fmt(v, 0);
+  return window.fmt(v, 0);
 }
 const tooltip = document.getElementById("tooltip");
 const hoverPoints = {};
@@ -268,7 +273,7 @@ function drawImpact(results) {
       ctx.fillText(fmt(max * f), start - 4, y);
     });
     ctx.stroke();
-    const groupWidth = half / 3;
+    const groupWidth = half / results.length;
     results.forEach((r, i) => {
       const cx = start + (i + 0.5) * groupWidth;
       const champ = part === 0 ? r.champion_mwh_an : r.lcoe_champion_fcfa_kwh;
@@ -291,7 +296,7 @@ function drawImpact(results) {
   ctx.font = "bold 11px Segoe UI, Arial, sans-serif";
   ctx.textAlign = "center"; ctx.textBaseline = "top";
   results.forEach((r, i) => {
-    const x = pad.l + (i + 0.5) * (half / 3);
+    const x = pad.l + (i + 0.5) * (half / results.length);
     ctx.fillText(`+${fmtInt(r.economies_fcfa_an / 1e6)} M FCFA/an`, x, pad.t + 2);
   });
 }
@@ -336,8 +341,7 @@ async function loadCatalog() {
 }
 
 async function loadImpactAll(temperature) {
-  const cities = ["Dakar", "Saint-Louis", "Matam"];
-  const results = await Promise.all(cities.map(async (city) => {
+  const results = await Promise.all(SENEGAL_ZONES.map(async (city) => {
     const response = await fetch(`/api/impact?city=${encodeURIComponent(city)}&temperature_c=${temperature}`);
     if (!response.ok) throw new Error("Bilan d'impact indisponible");
     return response.json();
@@ -385,8 +389,16 @@ async function runPipeline() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const slider = document.getElementById("temperature");
+  const citySelect = document.getElementById("city");
   slider.addEventListener("input", () => {
     document.getElementById("temp-value").textContent = slider.value + " °C";
+  });
+  citySelect.addEventListener("change", () => {
+    const preset = citySelect.options[citySelect.selectedIndex].dataset.temp;
+    if (preset) {
+      slider.value = preset;
+      document.getElementById("temp-value").textContent = preset + " °C";
+    }
   });
   document.getElementById("run").addEventListener("click", runPipeline);
   document.getElementById("pdf").addEventListener("click", () => {

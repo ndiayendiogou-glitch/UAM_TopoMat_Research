@@ -1,4 +1,4 @@
-"""UAM-TOPOMAT -- Nuit 10 : preuves formelles SymPy et certificats LaTeX.
+"""UAM-TOPOMAT : preuves formelles SymPy et certificats LaTeX.
 
 Ce module dérive symboliquement (SymPy uniquement, aucune dépendance à SciPy)
 les six équations fondatrices de la chaîne UAM-TOPOMAT :
@@ -15,7 +15,8 @@ les six équations fondatrices de la chaîne UAM-TOPOMAT :
 Chaque preuve est un objet :class:`SymbolicProof` dont les résidus
 symboliques sont certifiés nuls et dont les équations sont exportées en
 code LaTeX propre (``sympy.latex`` avec uneTable de noms contrôlée). Le
-module vérifie ensuite numériquement que les deux champions de la Nuit 9
+module vérifie ensuite
+numériquement que les deux champions certifiés
 (UAM-1384 et UAM-1517) respectent les bornes théoriques exactes issues de
 ces six théorèmes.
 """
@@ -529,7 +530,7 @@ def _load_champions(path: Path = CHAMPIONS_PATH) -> dict:
 
 
 def verify_champions(path: Path = CHAMPIONS_PATH) -> dict[str, list[BoundCheck]]:
-    """Vérifie les bornes exactes des deux champions de la Nuit 9.
+    """Vérifie les bornes exactes des deux champions certifiés.
 
     Les six théorèmes fournissent les bornes : dispersion et vitesse de
     groupe (gap borné, $\\mu_n>\\mu_p>0$), quantification de Chern
@@ -665,7 +666,7 @@ def build_equations_tex() -> str:
     proofs = all_proofs()
     parts = [
         "% =====================================================================",
-        "%  UAM-TOPOMAT -- Nuit 10 : equations formelles certifiees par SymPy",
+        "%  UAM-TOPOMAT : equations formelles certifiees par SymPy",
         "%  Universite Amadou Mahtar Mbow / UFR STA / Cellule Physique",
         "%  Realise par : Ndiogou Ndiaye -- Annee universitaire 2026-2027",
         "%  Fichier genere automatiquement par src/quantum/symbolic_proofs.py",
@@ -704,7 +705,7 @@ def build_equations_tex() -> str:
     parts.append(r"\section{Verification numerique des champions UAM}")
     parts.append("")
     parts.append(
-        "Les deux champions de la Nuit 9 satisfont l'ensemble des bornes "
+        "Les deux champions certifies satisfont l'ensemble des bornes "
         "theoriques exactes etant donnees par les six theoremes."
     )
     parts.append("")

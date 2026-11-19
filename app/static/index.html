@@ -132,13 +132,13 @@
       <img class="brand-logo" src="/static/logo_uam.png" alt="Logo officiel de l'Université Amadou Mahtar Mbow">
       <div>
         <h1>UAM-TOPOMAT — Cellule Physique UFR STA</h1>
-        <p>Université Amadou Mahtar Mbow · Chaîne scientifique des Nuits 1 à 12 · Année universitaire 2026 — 2027</p>
+        <p>Université Amadou Mahtar Mbow · UFR Sciences et Technologies Avancées · Laboratoire Numérique Souverain · Année universitaire 2026 – 2027</p>
       </div>
     </div>
     <div class="charter">
       <strong>Réalisé par : Ndiogou Ndiaye</strong><br>
       <strong>République du Sénégal</strong><br>
-      Simulation énergétique · Dakar · Saint-Louis · Matam
+      Simulation énergétique multi-régions · Sénégal &amp; Sahel
     </div>
   </div>
 </header>
@@ -157,14 +157,20 @@
     <div class="control">
       <label for="city">Ville / site climatique</label>
       <select id="city" aria-label="Ville">
-        <option value="Dakar">Dakar — 31 °C</option>
-        <option value="Saint-Louis">Saint-Louis — 37 °C</option>
-        <option value="Matam" selected>Matam — 47 °C</option>
+        <option value="Dakar" data-temp="31">Dakar — 31 °C</option>
+        <option value="Saint-Louis" data-temp="37">Saint-Louis — 37 °C</option>
+        <option value="Matam" data-temp="47" selected>Matam — 47 °C</option>
+        <option value="Podor" data-temp="48">Podor — 48 °C</option>
+        <option value="Tambacounda" data-temp="44">Tambacounda — 44 °C</option>
+        <option value="Kaolack" data-temp="40">Kaolack — 40 °C</option>
+        <option value="Louga" data-temp="39">Louga — 39 °C</option>
+        <option value="Ziguinchor" data-temp="34">Ziguinchor — 34 °C</option>
+        <option value="Région personnalisée">Région personnalisée — curseur libre 20–55 °C</option>
       </select>
     </div>
     <div class="control">
       <label for="temperature">Température sahélienne : <span class="temp-value" id="temp-value">47 °C</span></label>
-      <input id="temperature" type="range" min="25" max="55" step="1" value="47" aria-label="Température">
+      <input id="temperature" type="range" min="20" max="55" step="1" value="47" aria-label="Température">
     </div>
     <div class="actions">
       <button class="btn-run" id="run" type="button">Lancer le Pipeline Automatique Complet</button>
@@ -192,7 +198,7 @@
       <div class="legend"><span><i style="background:#2c7bb6"></i>Ω &lt; 0</span><span><i style="background:#f7f7f7;border:1px solid #ccc"></i>0</span><span><i style="background:#d7191c"></i>Ω &gt; 0</span></div>
     </div>
     <div class="panel chart-card">
-      <div class="chart-head"><h3>(c) Caractéristique électrique J(V)</h3><span id="jv-info">—</span></div>
+      <div class="chart-head"><h3>(c) Caractéristique électrique J(V) — équations de dérive-diffusion</h3><span id="jv-info">—</span></div>
       <div class="canvas-wrap"><canvas id="chart-jv"></canvas></div>
       <div class="legend"><span><i style="background:#0b6e4f"></i>J(V) calculée</span><span><i style="background:#9ecae1"></i>Point de puissance max.</span></div>
     </div>
@@ -211,10 +217,10 @@
 
 <div class="footer">
   <span>100 % hors ligne — FastAPI locale sur <strong>http://127.0.0.1:8050</strong> — aucune ressource CDN externe.</span>
-  <span><a href="/api/report/pdf" download>Fiche technique PDF officielle</a> · <a href="/api/figures/night11" download>Figure Nuit 11 (300 dpi)</a></span>
+  <span><a href="/api/report/pdf" download>Fiche technique PDF officielle</a> · <a href="/api/figures/impact" download>Bilan énergétique multi-régions (300 dpi)</a></span>
 </div>
 <div class="tooltip" id="tooltip"></div>
 
-<script src="/static/app.js"></script>
+<script src="/static/app.js?v=2026"></script>
 </body>
 </html>

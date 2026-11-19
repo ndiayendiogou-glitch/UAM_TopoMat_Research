@@ -1,17 +1,19 @@
-"""UAM-TOPOMAT -- Nuit 11 : simulateur d'impact energetique au Senegal.
+"""UAM-TOPOMAT : simulateur d'impact energetique au Senegal.
 
-Mini-centrale solaire de 100~kWc associee a un stockage hybride, deployee a
-Dakar (31~degC), Saint-Louis (37~degC) et Matam (47~degC). Le couple champion
-UAM-1384 (K2AgBiI6) + UAM-1517 (Ti3C2O2) est compare au couple classique
-Silicium + batterie Plomb/Li-ion.
+Mini-centrale solaire de 100~kWc associee a un stockage hybride, deployee sur
+l'ensemble des zones climatiques du Senegal : Dakar (31~degC), Saint-Louis
+(37~degC), Matam (47~degC), Podor (48~degC), Tambacounda (44~degC), Kaolack
+(40~degC), Louga (39~degC), Ziguinchor (34~degC) et region personnalisee.
+Le couple champion UAM-1384 (K2AgBiI6) + UAM-1517 (Ti3C2O2) est compare au
+couple classique Silicium + batterie Plomb/Li-ion.
 
-Le modele reutilise explicitement les modules des nuits precedentes :
+Le modele reutilise explicitement les modules scientifiques valides :
 
-* rendement Shockley--Queisser et spectre AM1.5G (Nuit 4) ;
-* bilan radiatif--convectif et production annuelle (Nuit 5) ;
-* donneeselectriques J(V) de la Nuit 6 pour le controle de qualite ;
-* densite d'energie du supercondensateur MXene (Nuit 7) ;
-* base de 2~000 candidats et champions certifies (Nuits 8--10).
+* rendement Shockley--Queisser et spectre AM1.5G certifie ;
+* bilan radiatif--convectif et production annuelle ;
+* caracteristiques electriques J(V) pour le controle de qualite ;
+* densite d'energie du supercondensateur MXene ;
+* base de 2~000 candidats et champions certifies.
 
 Hypotheses economiques (documentees et deterministes) : tarif SENELEC de
 220~FCFA/kWh, facteur de emission du reseau 0,55~t~CO2/MWh, change fixe
@@ -24,6 +26,7 @@ cycles. Python pur : numpy, sympy, matplotlib. Aucune dependance SciPy.
 from __future__ import annotations
 
 import json
+import unicodedata
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -45,6 +48,7 @@ from src.thermo.sahel_climate import (
     KELVIN_OFFSET,
     MATAM,
     SAINT_LOUIS,
+    SENEGAL_SITES,
     PVModule,
     SahelSite,
     annual_yield,
@@ -267,10 +271,10 @@ def conventional_modules() -> tuple[PVModule, StorageTechnology]:
 
 
 def site_at_temperature(site: SahelSite, temperature_c: float) -> SahelSite:
-    """Site climatique avec temperature ambiante ajustee (25 a 55 degC)."""
+    """Site climatique avec temperature ambiante ajustee (20 a 55 degC)."""
     temperature = float(temperature_c)
-    if not 25.0 <= temperature <= 55.0:
-        raise ValueError("La temperature sahélienne doit etre comprise entre 25 et 55 degC.")
+    if not 20.0 <= temperature <= 55.0:
+        raise ValueError("La temperature sahélienne doit etre comprise entre 20 et 55 degC.")
     return SahelSite(
         name=site.name,
         ambient_c=temperature,
@@ -280,14 +284,27 @@ def site_at_temperature(site: SahelSite, temperature_c: float) -> SahelSite:
     )
 
 
+def _normalize_site_name(name: str) -> str:
+    """Cle stable et sans accent pour les noms de zones climatiques."""
+    text = unicodedata.normalize("NFKD", str(name).strip().lower())
+    text = "".join(char for char in text if not unicodedata.combining(char))
+    return text.replace("_", "-").replace(" ", "-")
+
+
 def site_by_name(name: str, temperature_c: float | None = None) -> SahelSite:
-    """Retourne Dakar, Saint-Louis ou Matam, avec override de temperature."""
-    sites = {site.name.lower(): site for site in DEFAULT_SITES}
-    aliases = {"dakar": "dakar", "saint-louis": "saint-louis", "saint_louis": "saint-louis", "matam": "matam"}
-    key = aliases.get(str(name).strip().lower())
-    if key is None:
+    """Retourne une zone climatique du Senegal, avec override de temperature."""
+    aliases = {
+        "st-louis": "saint-louis",
+        "region-personnalisee": "region-personnalisee",
+        "custom": "region-personnalisee",
+        "personnalisee": "region-personnalisee",
+    }
+    key = _normalize_site_name(name)
+    key = aliases.get(key, key)
+    sites = {_normalize_site_name(site.name): site for site in SENEGAL_SITES}
+    base = sites.get(key)
+    if base is None:
         raise ValueError(f"Site inconnu : {name!r}.")
-    base = sites[key]
     return site_at_temperature(base, temperature_c) if temperature_c is not None else base
 
 
@@ -532,7 +549,7 @@ def make_figure(impact: SenegalImpact, path: Path = FIGURE_PATH) -> dict:
     )
 
     figure.suptitle(
-        "UAM-TOPOMAT — Nuit 11 : simulateur d'impact Senegal\n"
+        "UAM-TOPOMAT — simulateur d'impact multi-regions (Senegal)\n"
         "Universite Amadou Mahtar Mbow / UFR STA / Cellule Physique — Ndiogou Ndiaye",
         fontsize=12.5, y=0.995,
     )
@@ -572,7 +589,7 @@ def symbolic_impact_laws() -> dict[str, sp.Expr]:
 
 @lru_cache(maxsize=1)
 def run() -> SenegalImpact:
-    """Execute la Nuit 11 : calculs, figure 300 dpi et export JSON."""
+    """Execute le simulateur d'impact : calculs, figure 300 dpi et export JSON."""
     impact = evaluate_all_sites()
     make_figure(impact)
     export_json(impact)

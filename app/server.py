@@ -1,4 +1,4 @@
-"""UAM-TOPOMAT -- Nuit 11 : serveur de demonstration jury (FastAPI local).
+"""UAM-TOPOMAT : serveur de demonstration jury (FastAPI local).
 
 Application 100 % hors ligne : aucun CDN, aucune ressource externe. Le
 serveur ecoute sur http://127.0.0.1:8050 et expose :
@@ -8,7 +8,8 @@ serveur ecoute sur http://127.0.0.1:8050 et expose :
 * le pipeline automatique (bandes, Berry/Chern, J(V), Ragone, impact) ;
 * la figure 300~dpi et la fiche technique PDF generee par ``export_report``.
 
-Tous les calculs reutilisent les solveurs des Nuits 1 a 10.
+Tous les calculs reutilisent les solveurs quantiques, topologiques et
+thermodynamiques certifies de la plateforme.
 """
 
 from __future__ import annotations
@@ -53,9 +54,9 @@ JV_POINTS = 17
 RAGONE_CURRENTS = (50.0, 100.0, 250.0, 500.0)
 
 app = FastAPI(
-    title="UAM-TOPOMAT — Nuit 11",
-    description="Simulateur d'impact Senegal et interface de demonstration live.",
-    version="11.0.0",
+    title="UAM-TOPOMAT — Simulateur d'impact Sénégal",
+    description="Simulateur d'impact multi-régions et interface de demonstration live.",
+    version="2026.2",
 )
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
@@ -64,7 +65,7 @@ class PipelineRequest(BaseModel):
     """Parametres du pipeline automatique lance par le jury."""
 
     material_id: str = Field(default=SOLAR_CHAMPION_ID, min_length=1)
-    temperature_c: float = Field(default=47.0, ge=25.0, le=55.0)
+    temperature_c: float = Field(default=47.0, ge=20.0, le=55.0)
     city: str = Field(default="Matam", min_length=1)
 
 
@@ -185,7 +186,7 @@ def _jv(material: dict, site: Any) -> dict:
             "jsc_ma_cm2": float(result.jsc / 10.0),
             "ff": float(result.ff),
             "efficiency_percent": float(100.0 * result.efficiency),
-            "method": "EDF derive-diffusion (Nuit 6)",
+            "method": "Équations de dérive-diffusion",
             "junction_c": float(result.junction_temperature_c),
         }
     except (RuntimeError, ValueError, ZeroDivisionError, FloatingPointError, OverflowError):
@@ -208,7 +209,7 @@ def _jv(material: dict, site: Any) -> dict:
             "jsc_ma_cm2": float(diode.jsc_ma_cm2),
             "ff": float(power[peak] / (diode.voc * diode.jsc_ma_cm2)),
             "efficiency_percent": float(100.0 * diode.efficiency),
-            "method": "diode radiatif Shockley-Queisser (Nuit 4)",
+            "method": "Diode radiatif Shockley–Queisser",
             "junction_c": junction_k - KELVIN_OFFSET,
         }
 
@@ -302,7 +303,7 @@ def health() -> dict:
     """Etat du service et informations de charte."""
     return {
         "status": "ok",
-        "service": "UAM-TOPOMAT Nuit 11",
+        "service": "UAM-TOPOMAT — Simulateur d'impact multi-régions",
         "offline": True,
         "host": "127.0.0.1",
         "port": 8050,
@@ -332,7 +333,7 @@ def material_detail(material_id: str) -> dict:
 @app.get("/api/impact")
 def impact_summary(
     city: str = Query(default="Matam"),
-    temperature_c: float = Query(default=47.0, ge=25.0, le=55.0),
+    temperature_c: float = Query(default=47.0, ge=20.0, le=55.0),
 ) -> dict:
     """Bilan energetique Sénégal du couple champion face au couple classique."""
     try:
@@ -354,7 +355,7 @@ def run_pipeline(request: PipelineRequest) -> dict:
 @app.get("/api/chart-data/{material_id}")
 def chart_data(
     material_id: str,
-    temperature_c: float = Query(default=47.0, ge=25.0, le=55.0),
+    temperature_c: float = Query(default=47.0, ge=20.0, le=55.0),
     city: str = Query(default="Matam"),
 ) -> dict:
     """Donnees des graphiques pour un materiau (equivalent GET du pipeline)."""
@@ -378,9 +379,10 @@ def report_pdf() -> FileResponse:
     )
 
 
+@app.get("/api/figures/impact")
 @app.get("/api/figures/night11")
-def night11_figure() -> FileResponse:
-    """Figure 300 dpi du simulateur d'impact."""
+def impact_figure() -> FileResponse:
+    """Figure 300 dpi du bilan energetique multi-regions."""
     from src.thermo.senegal_grid_impact import run as run_impact
 
     if not FIGURE_PATH.exists():

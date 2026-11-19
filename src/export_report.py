@@ -1,4 +1,4 @@
-"""UAM-TOPOMAT -- Nuit 10 : générateur automatique de fiches techniques PDF.
+"""UAM-TOPOMAT : générateur automatique de fiches techniques PDF.
 
 L'exportateur produit une fiche LaTeX conforme à la charte officielle
 Université Amadou Mahtar Mbow / UFR Sciences et Technologies Avancées /
@@ -35,10 +35,10 @@ PDF_PATH = ROOT / "results" / "UAM_TopoMat_Fiche_Champions.pdf"
 FIGURES_DIR = ROOT / "results" / "figures"
 
 FIGURES: tuple[tuple[str, str], ...] = (
-    ("night9_pareto_discovery.png", "Espace de Pareto et Top 10 des matériaux champions (Nuit 9)."),
-    ("night4_solar_efficiency_vs_temp.png", "Rendement de Shockley--Queisser et dégradation thermique (Nuit 4)."),
-    ("night7_ragone_mxene_sahel.png", "Diagramme de Ragone des MXènes sous climat sahélien (Nuit 7)."),
-    ("night1_bands_dos.png", "Structure de bandes Tight-Binding et densité d'états (Nuit 1)."),
+    ("night9_pareto_discovery.png", "Espace de Pareto NSGA-II et Top 10 des matériaux champions."),
+    ("night4_solar_efficiency_vs_temp.png", "Limite de Shockley--Queisser et dégradation thermique."),
+    ("night7_ragone_mxene_sahel.png", "Diagramme de Ragone des MXènes sous climat sahélien."),
+    ("night1_bands_dos.png", "Structure de bandes Tight-Binding et densité d'états."),
 )
 
 
@@ -62,7 +62,7 @@ def _formula_tex(formula: str) -> str:
 
 
 def load_champions(path: Path = CHAMPIONS_PATH) -> dict:
-    """Charge et valide le JSON du Top 10 de la Nuit 9."""
+    """Charge et valide le JSON du Top 10 certifié."""
     payload = json.loads(path.read_text(encoding="utf-8"))
     top = payload.get("top10_champions", [])
     if len(top) != 10:
@@ -154,7 +154,7 @@ def build_tex(payload: dict | None = None) -> str:
 
     parts = [
         "% =====================================================================",
-        "%  UAM-TOPOMAT -- Nuit 10 : fiche technique des materiaux champions",
+        "%  UAM-TOPOMAT : fiche technique des materiaux champions",
         "%  Charte officielle : Universite Amadou Mahtar Mbow / UFR STA /",
         "%  Cellule Physique / Realise par Ndiogou Ndiaye / 2026-2027",
         "%  Genere automatiquement par src/export_report.py",
@@ -178,7 +178,7 @@ def build_tex(payload: dict | None = None) -> str:
         r"\newcommand{\TOPOMAT}{UAM-TOPOMAT}",
         "",
         r"\title{\textbf{\TOPOMAT}\\[0.4em]\large Fiches techniques des matériaux champions\\"
-        r"\textmd{Nuit 10 --- Preuves formelles SymPy et export PDF scientifique}}",
+        r"\textmd{Preuves formelles SymPy et export PDF scientifique}}",
         r"\author{Ndiogou Ndiaye}",
         r"\date{\UAM \quad---\quad \UFR \quad---\quad Cellule Physique\\"
         r"Année universitaire : 2026 -- 2027}",
@@ -198,7 +198,7 @@ def build_tex(payload: dict | None = None) -> str:
         r"\end{tcolorbox}",
         "",
         r"\section{Synthèse exécutive}",
-        "La présente fiche consolide dix nuits de modélisation quantique, topologique et "
+        "La présente fiche consolide l'ensemble de la chaîne de modélisation quantique, topologique et "
         "thermodynamique. Le criblage de 2~000 candidats sans plomb sous le climat de Matam "
         r"($47\,^\circ$C, $1050$\,W\,m$^{-2}$) a livré un Top~10 dont deux champions "
         "architecturaux : le champion solaire \\texttt{UAM-1384} (K$_2$AgBiI$_6$, "

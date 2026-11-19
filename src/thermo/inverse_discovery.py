@@ -838,7 +838,7 @@ def make_figure(result: OptimizationResult, path: Path = FIGURE_PATH) -> dict:
     ax_bars.legend(loc="upper right", framealpha=0.92)
 
     figure.suptitle(
-        "UAM-TOPOMAT — Nuit 9 : découverte inverse NSGA-II et Top 10 des matériaux champions",
+        "UAM-TOPOMAT — découverte inverse NSGA-II et Top 10 des matériaux champions",
         fontsize=12.5, y=0.995,
     )
     path.parent.mkdir(parents=True, exist_ok=True)
