@@ -10,8 +10,13 @@ const COLORS = {
   muted: "#5b7183",
 };
 
-const fmt = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
-const fmtInt = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+function fmt(v, d = 2) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n.toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d }) : "—";
+}
+function fmtInt(v) {
+  return fmt(v, 0);
+}
 const tooltip = document.getElementById("tooltip");
 const hoverPoints = {};
 let lastPayload = null;

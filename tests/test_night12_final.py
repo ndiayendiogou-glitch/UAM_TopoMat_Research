@@ -246,9 +246,13 @@ def test_champion_fiche_pdf_is_still_valid() -> None:
 def test_demo_batch_file_is_present_and_consistent() -> None:
     assert DEMO_BAT.exists(), DEMO_BAT
     content = DEMO_BAT.read_text(encoding="utf-8", errors="replace")
+    lines = [line for line in content.splitlines() if line.strip()]
+    assert len(lines) == 6, lines
     for token in ("uvicorn app.server:app", "8050", "http://127.0.0.1:8050",
-                  "Ndiogou Ndiaye", "UAM"):
+                  "UAM-TOPOMAT", "timeout /t 3 /nobreak > nul"):
         assert token in content, token
+    assert "urllib" not in content and "powershell" not in content.lower()
+    assert ":UAM_WAIT_READY" not in content and ":UAM_READY" not in content
 
 
 def test_jury_dossier_is_complete() -> None:
